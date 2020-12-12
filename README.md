@@ -1,3 +1,2 @@
-# Covid_inquiry_analysis
-# Covid_inquiry_analysis
-# City_map
+# Map of Liverpool data using Kepler
+
