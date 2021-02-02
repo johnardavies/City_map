@@ -1,7 +1,6 @@
 # Interactive-Liverpool_food_supply map
 A repo that produces an interactive map of food supply outlets in Liverpool over data on the index of multiple deprivation
 
-https://johnardavies.github.io/Interactive-EU-NUTS-map/#
 
 To see the map locally:
 
