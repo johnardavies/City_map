@@ -43,13 +43,12 @@ function colorDictList2Array(colorDictList) {
         return arr;
       }
       var growthColorStops = [
-        {offset: 0.1333, color: "#2166ac"},
-        {offset: 0.5505, color: "#67a9cf"},
-        {offset: 0.7647, color: "#d1e5f0"},
-        {offset: 0.9799, color: "#f7f7f7"},
-        {offset: 1.2146, color: "#fddbc7"},
-        {offset: 1.5531, color: "#ef8a62"},
-        {offset: 10000000, color: "#b2182b"},
+        {offset: 1, color: "#2166ac"},
+        {offset: 2, color: "#67a9cf"},
+        {offset: 3, color: "#d1e5f0"},
+        {offset: 4, color: "#f7f7f7"},
+        {offset: 5, color: "#fddbc7"},
+
       ]
 var scale=1 ;
   var bounds = [
@@ -123,23 +122,7 @@ function toggleLayer (layerName) {
   // when the map loads to the following
   map.on('load', function() {
 
-  // Each line is color, feature label and shortname (for the legend)
-  var color_label = [
-    ["Local authority",                 "#8dd3c7"], 
-    ["Independent",                     "#ccebc5"],
-    ["National Museum",                 "#bebada"],
-    ["University",                      "#fb8072"],
-    ["National Trust",                  "#80b1d3"],
-    ["Ministry of Defence Funded",      "#fdb462"],
-    ["English Heritage",                "#b3de69"],
-    ["", "#ccc"],
-  ];
 
- 
-
-
-
-//Adds the nuts0 data
 
 
     map.addSource('Index_mult_dep', {
@@ -151,23 +134,19 @@ function toggleLayer (layerName) {
     map.addLayer({
       'id': 'Index_mult_dep',
       'source':'Index_mult_dep',
-      'type': 'fill',
       'layout': {
         'visibility': 'visible',
       },
+      'type': 'fill',
       'paint': {
-        property: 'growth1505',
-        'fill-outline-color':'#000000',
-         'fill-opacity': 0.4,
          'fill-color':{ 
-          property: 'Acute morbidity indicator',
+          property: 'Household overcrowding indicator_rank',
           stops: colorDictList2Array(growthColorStops),
-
-         }
+         }, 'fill-opacity':0.7
       }
+    
    //inserted before the nuts1 layer
  });
-
 
 
 
@@ -288,6 +267,24 @@ map.addLayer({
         resetNavMenu();
         this.className = 'active';
     });
+ /* 
+    for (i = 0; i < layers.length; i++) {
+  var layer = layers[i];
+  var color = colors[i];
+  var item = document.createElement('div');
+  var key = document.createElement('span');
+  key.className = 'legend-key';
+  key.style.backgroundColor = color;
+
+  var value = document.createElement('span');
+  value.innerHTML = layer;
+  item.appendChild(key);
+  item.appendChild(value);
+  legend.appendChild(item);
+}
+*/
+
+
 
 
 
