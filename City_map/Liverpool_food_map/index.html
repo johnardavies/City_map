@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <link href='./style.css' rel='stylesheet' />
+  </head>
+  <body>
+    <div id='map'></div>
+    <img src="./nesta_logo.png" id='logo' />
+    
+    <nav id="menu">
+         <a href="#" id="toggle-nuts0">Index of multiple deprivation</a>
+        <a href="#" id="toggle-nuts1">Food banks</a>
+        <a href="#" id="toggle-nuts2">Food outlets</a>
+        
+    </nav>
+    <div class='map-overlay top'>
+
+      <!-- Slider commented out<div class='map-overlay-inner'>
+        <label>Filter <span id='slider-value'></span></label>
+        <input id='slider' type='range' min='0' max='60' step='1' value='0' />
+        </div> -->
+        <div id="head" style="fill-color:red">
+          <h1 style="color:#000000; width: 8em;">Food supply map</h1>
+        </div>
+
+        
+
+
+    <script>
+
+function colorDictList2Array(colorDictList) {
+        arr = [];
+
+        for (var i=0; i < colorDictList.length; i++) {
+            colorDict = colorDictList[i];
+            arr.push( [ colorDict["offset"], colorDict["color"] ] );
+        }
+        return arr;
+      }
+      var growthColorStops = [
+        {offset: 0.1333, color: "#2166ac"},
+        {offset: 0.5505, color: "#67a9cf"},
+        {offset: 0.7647, color: "#d1e5f0"},
+        {offset: 0.9799, color: "#f7f7f7"},
+        {offset: 1.2146, color: "#fddbc7"},
+        {offset: 1.5531, color: "#ef8a62"},
+        {offset: 10000000, color: "#b2182b"},
+      ]
+var scale=1 ;
+  var bounds = [
+  
+ [-3.0087*scale, 53.3317*scale ], // Southwest coordinates  
+  [ -2.8267*scale , 53.475*scale    ]  // Northeast coordinates
+  ];
+  var zoomThreshold=25;
+
+// [-2.829527	,53.528475]
+  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+  var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/basic-v9',  
+
+      center: [ -2.92413 , 53.40938],
+      minZoom: 1,
+      zoom: 8 ,  // The bigger the zoom number the closer in you ge
+       pitch: 40, // the angle of the view
+    bearing: 0,  // the direction the map view is pointing
+      maxBounds: bounds,
+  });
+
+  // Represent numbers as string (i.e., with thousands separators)
+  function formatNumber (num) {
+      return num.toLocaleString('en')
+  }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Function that makes sure only one layer shows at one time. Should be tidied up
+function toggleLayer (layerName) {
+     var currentState = map.getLayoutProperty(layerName, 'visibility');
+     if (layerName=='Index_mult_dep' && currentState=='none')
+     {
+
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Food_banks', 'visibility', 'none');
+        map.setLayoutProperty('Food_outlets', 'visibility', 'none');
+        
+
+     }
+     else if (layerName=='Food_banks' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
+        map.setLayoutProperty('Food_outlets', 'visibility', 'none');
+        
+     }
+     else if (layerName=='Food_outlets' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
+        map.setLayoutProperty('Food_banks', 'visibility', 'none');
+       
+     }
+    else if (layerName=='EU_NUTS3' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
+        map.setLayoutProperty('Food_banks', 'visibility', 'none');
+       
+     }
+
+    else {
+          newProperty = undefined;
+       map.setLayoutProperty(layerName, 'visibility', newProperty);
+      }
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // when the map loads to the following
+  map.on('load', function() {
+
+  // Each line is color, feature label and shortname (for the legend)
+  var color_label = [
+    ["Local authority",                 "#8dd3c7"], 
+    ["Independent",                     "#ccebc5"],
+    ["National Museum",                 "#bebada"],
+    ["University",                      "#fb8072"],
+    ["National Trust",                  "#80b1d3"],
+    ["Ministry of Defence Funded",      "#fdb462"],
+    ["English Heritage",                "#b3de69"],
+    ["", "#ccc"],
+  ];
+
+ 
+
+
+
+//Adds the nuts0 data
+
+
+    map.addSource('Index_mult_dep', {
+      type: 'geojson',
+      data: '/Data/Liverpool.geojson'
+    });
+
+    //Adds the data as a layer called 'Index_mult_dep'
+    map.addLayer({
+      'id': 'Index_mult_dep',
+      'source':'Index_mult_dep',
+      'type': 'fill',
+      'layout': {
+        'visibility': 'visible',
+      },
+      'paint': {
+        property: 'growth1505',
+        'fill-outline-color':'#000000',
+         'fill-opacity': 0.4,
+         'fill-color':{ 
+          property: 'Acute morbidity indicator',
+          stops: colorDictList2Array(growthColorStops),
+
+         }
+      }
+   //inserted before the nuts1 layer
+ });
+
+
+
+
+
+//Imports NUTS1 as a layer
+//map.loadImage(
+//'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+//function (error, image) {
+//if (error) throw error;
+//map.addImage('custom-marker', image);
+
+
+map.addSource('Food_banks', {
+  type: 'geojson',
+  data: '/Data/Foodbanks.geojson'
+});
+
+map.addLayer({
+'id': 'Food_banks',
+'type': 'circle',
+'source': 'Food_banks',
+'layout': {
+//'icon-image': 'custom-marker'
+}
+});
+
+
+    //Imports NUTS2
+    map.addSource('Food_outlets', {
+      type: 'geojson',
+      data: '/Data/Food_outlets_geo.geojson'
+    });
+
+
+map.addLayer({
+'id': 'Food_outlets',
+'type': 'circle',
+'source': 'Food_outlets',
+'layout': {
+//'icon-image': 'custom-marker'
+},
+ 'paint': {
+            'circle-radius': {
+               'base': 3 ,
+               'stops': [[12, 3], [22, 140]]
+            },
+           // 'circle-color': "#d95f0e", // Was '#A52A2A'
+           'circle-color': {
+            property:'BusinessType',
+            type: 'categorical',
+            stops: [
+            // encode URI to deal with the issues about special characters
+             [encodeURI('Restaurant/Cafe/Canteen'), '#8dd3c7'],
+             [encodeURI('Retailers - other'), '#ccebc5'],
+             [encodeURI('Takeaway/sandwich shop'), '#bebada'],
+              [encodeURI('Pub/bar/nightclub'), '#fb8072'],
+             [encodeURI('Hospitals/Childcare/Caring Premises'), '#80b1d3'],
+              [encodeURI('School/college/university'), '#fdb462'],
+              [encodeURI('Other catering premises'), '#b3de69'],
+             [encodeURI('Hotel/bed & breakfast/guest house'), '#ccc'],
+              [encodeURI('Retailers - supermarkets/hypermarkets'), '#fb8072'],
+              [encodeURI('Mobile caterer'), '#80b1d3'],
+               [encodeURI('Distributors/Transporters'), '#fdb462'],
+               [encodeURI('Manufacturers/packers')	, '#fdb462'] 
+            ]
+          }
+
+
+          }
+
+
+          
+});
+
+
+    
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Sets up the buttons that allow the layers to be selected
+    buttonNames = ['EU NUTS0', 'EU NUTS1', 'EU NUTS2']
+
+    function resetNavMenu() {
+        buttonNames.forEach(function(x) {
+          document.getElementById(x).className = "";
+        });
+    }
+   //Toggle for NUTS 0
+
+
+   document.getElementById('toggle-nuts0').addEventListener('click', function() {
+       toggleLayer('Index_mult_dep');
+       buttonNames.forEach(function(x) {
+       document.getElementById(x).className = "";
+     });
+       resetNavMenu();  //with the click of the button reset the color
+       this.className = 'active';
+
+   });
+
+
+    document.getElementById('toggle-nuts1').addEventListener('click', function() {
+        toggleLayer('Food_banks');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();  //with the click of the button reset the color
+        this.className = 'active';
+
+    });
+
+
+    document.getElementById('toggle-nuts2').addEventListener('click', function() {
+        toggleLayer('Food_outlets');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+
+
+
+  });  //Closes the map.load
+
+    </script>
+  </body>
+</html>
