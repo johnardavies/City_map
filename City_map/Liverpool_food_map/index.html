@@ -27,6 +27,7 @@
         <div id="head" style="fill-color:red">
           <h1 style="color:#000000; width: 8em;">Food supply map</h1>
         </div>
+        <div class='map-overlay' id='legend'></div>
 
         
 
@@ -53,10 +54,10 @@ function colorDictList2Array(colorDictList) {
 var scale=1 ;
   var bounds = [
   
- [-3.0087*scale, 53.3317*scale ], // Southwest coordinates  
-  [ -2.8267*scale , 53.475*scale    ]  // Northeast coordinates
+ [-3.066758*scale, 53.2859873*scale ], // Southwest coordinates  
+  [-2.768642*scale ,  53.5207127*scale    ]  // Northeast coordinates
   ];
-  var zoomThreshold=25;
+  var zoomThreshold=4;
 
 // [-2.829527	,53.528475]
   mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
@@ -65,8 +66,8 @@ var scale=1 ;
     style: 'mapbox://styles/mapbox/basic-v9',  
 
       center: [ -2.92413 , 53.40938],
-      minZoom: 1,
-      zoom: 8 ,  // The bigger the zoom number the closer in you ge
+      minZoom: 0.1,
+      zoom: 10 ,  // The bigger the zoom number the closer in you go zoom was 8
        pitch: 40, // the angle of the view
     bearing: 0,  // the direction the map view is pointing
       maxBounds: bounds,
@@ -120,45 +121,12 @@ function toggleLayer (layerName) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // when the map loads to the following
-  map.on('load', function() {
+map.on('load', function() {
 
 
 
 
-    map.addSource('Index_mult_dep', {
-      type: 'geojson',
-      data: '/Data/Liverpool.geojson'
-    });
-
-    //Adds the data as a layer called 'Index_mult_dep'
-    map.addLayer({
-      'id': 'Index_mult_dep',
-      'source':'Index_mult_dep',
-      'layout': {
-        'visibility': 'visible',
-      },
-      'type': 'fill',
-      'paint': {
-         'fill-color':{ 
-          property: 'Household overcrowding indicator_rank',
-          stops: colorDictList2Array(growthColorStops),
-         }, 'fill-opacity':0.7
-      }
-    
-   //inserted before the nuts1 layer
- });
-
-
-
-
-//Imports NUTS1 as a layer
-//map.loadImage(
-//'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
-//function (error, image) {
-//if (error) throw error;
-//map.addImage('custom-marker', image);
-
-
+// Adds in the foodbank data 
 map.addSource('Food_banks', {
   type: 'geojson',
   data: '/Data/Foodbanks.geojson'
@@ -179,18 +147,11 @@ map.addLayer({
 });
 
 
-
-
-
-
-
-
-
-    //Imports NUTS2
-    map.addSource('Food_outlets', {
-      type: 'geojson',
-      data: '/Data/Food_outlets_geo.geojson'
-    });
+// Adds in the Food standards agency food outlet data 
+map.addSource('Food_outlets', {
+  type: 'geojson',
+  data: '/Data/Food_outlets_geo.geojson'
+});
 
 
 map.addLayer({
@@ -228,14 +189,34 @@ map.addLayer({
 
 
           }
-
-
-
-
-
-
           
 }, 'Food_banks');
+
+
+
+// Add in the index of multiple deprivation data
+map.addSource('Index_mult_dep', {
+    type: 'geojson',
+    data: '/Data/Liverpool.geojson'
+  });
+
+  //Adds the data as a layer called 'Index_mult_dep'
+  map.addLayer({
+    'id': 'Index_mult_dep',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'visible',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{ 
+        property: 'Household overcrowding indicator_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+  
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
 
 
     
@@ -287,11 +268,12 @@ map.addLayer({
 
 
    
+// Legend
+var layers = ['Lowest 20%', '20-40%', 'Middle 20%', '60-80%', 'Highest 20%'];
+var colors = [ '#2166ac','#67a9cf','#d1e5f0','#f7f7f7', '#fddbc7' ];
 
 
-    'Food_outlets'
- /* 
-    for (i = 0; i < layers.length; i++) {
+  for (i = 0; i < layers.length; i++) {
   var layer = layers[i];
   var color = colors[i];
   var item = document.createElement('div');
@@ -305,8 +287,16 @@ map.addLayer({
   item.appendChild(value);
   legend.appendChild(item);
 }
-*/
+
+// /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+// Code for popups that appear //////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////
 // Add a pop up that shows info on food outlets when selected
+/////////////////////////////////////////////////////////////
+
 map.on('click', 'Food_outlets', function (e) {
 var coordinates = e.features[0].geometry.coordinates.slice();
 var description = e.features[0].properties.BusinessType;
@@ -327,7 +317,9 @@ new mapboxgl.Popup()
 .addTo(map);
 });
 
+///////////////////////////////////////////////////////////////
 // Add a popup for the food banks
+//////////////////////////////////////////////////////////////
 
 map.on('click', 'Food_banks', function (e) {
 var coordinates = e.features[0].geometry.coordinates.slice();
