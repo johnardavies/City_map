@@ -15,7 +15,7 @@
     
     <nav id="menu">
          <a href="#" id="toggle-nuts0">Income levels</a>
-        <a href="#" id="toggle-nuts1">Homelessness</a>
+        <a href="#" id="toggle-nuts1">Morbidity levels</a>
         <a href="#" id="toggle-nuts2">Household overcrowding</a>
         
     </nav>
@@ -67,13 +67,13 @@ function colorDictList2Array(colorDictList) {
         return arr;
       }
       var growthColorStops = [
-        {offset: 1, color: "#2166ac"},
-        {offset: 2, color: "#67a9cf"},
+        {offset: 1, color: "#fddbc7"},
+        {offset: 2, color: "#f7f7f7"}, 
         {offset: 3, color: "#d1e5f0"},
-        {offset: 4, color: "#f7f7f7"},
-        {offset: 5, color: "#fddbc7"},
+        {offset: 4, color: "#67a9cf"},
+        {offset: 5, color: "#2166ac"},
 
-      ]
+      ] 
 var scale=1 ;
   var bounds = [
   
@@ -270,7 +270,7 @@ map.addLayer({
     'type': 'fill',
     'paint': {
         'fill-color':{ 
-        property: 'Homelessness indicator (rate per 1000 households)_rank',
+        property: 'Acute morbidity indicator_rank',
         stops: colorDictList2Array(growthColorStops),
         }, 'fill-opacity':0.7
     }
