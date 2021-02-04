@@ -14,9 +14,9 @@
     <img src="./nesta_logo.png" id='logo' />
     
     <nav id="menu">
-         <a href="#" id="toggle-nuts0">Index of multiple deprivation</a>
-        <a href="#" id="toggle-nuts1">Food banks</a>
-        <a href="#" id="toggle-nuts2">Food outlets</a>
+         <a href="#" id="toggle-nuts0">Income levels</a>
+        <a href="#" id="toggle-nuts1">Homelessness</a>
+        <a href="#" id="toggle-nuts2">Household overcrowding</a>
         
     </nav>
     <div class='map-overlay top'>
@@ -107,31 +107,25 @@ var scale=1 ;
 // Function that makes sure only one layer shows at one time. Should be tidied up
 function toggleLayer (layerName) {
      var currentState = map.getLayoutProperty(layerName, 'visibility');
-     if (layerName=='Index_mult_dep' && currentState=='none')
+     if (layerName=='Overcrowding' && currentState=='none')
      {
 
         map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Food_banks', 'visibility', 'none');
-        map.setLayoutProperty('Food_outlets', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
+        map.setLayoutProperty('Homelessness', 'visibility', 'none');
         
 
      }
-     else if (layerName=='Food_banks' && currentState=='none'){
+     else if (layerName=='Income_layer' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
-        map.setLayoutProperty('Food_outlets', 'visibility', 'none');
+        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
+        map.setLayoutProperty('Homelessness', 'visibility', 'none');
         
      }
-     else if (layerName=='Food_outlets' && currentState=='none'){
+     else if (layerName=='Homelessness' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
-        map.setLayoutProperty('Food_banks', 'visibility', 'none');
-       
-     }
-    else if (layerName=='EU_NUTS3' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Index_mult_dep', 'visibility', 'none');
-        map.setLayoutProperty('Food_banks', 'visibility', 'none');
+        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
        
      }
 
@@ -223,12 +217,34 @@ map.addSource('Index_mult_dep', {
     data: '/Data/Liverpool.geojson'
   });
 
-  //Adds the data as a layer called 'Index_mult_dep'
+  
+
+
+
+  //Adds the income data
   map.addLayer({
-    'id': 'Index_mult_dep',
+    'id': 'Income_layer',
     'source':'Index_mult_dep',
     'layout': {
-      'visibility': 'visible',
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{ 
+        property: 'Income Domain numerator_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+  
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
+//Adds the data as a layer called 'Index_mult_dep'
+map.addLayer({
+    'id': 'Overcrowding',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'none',
     },
     'type': 'fill',
     'paint': {
@@ -242,23 +258,41 @@ map.addSource('Index_mult_dep', {
 } ,'Food_outlets' );
 
 
-    
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  //Adds in the homelessness data as a layer called 'Homelessness'
+  map.addLayer({
+    'id': 'Homelessness',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{ 
+        property: 'Homelessness indicator (rate per 1000 households)_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+  
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
+
+
 // Sets up the buttons that allow the layers to be selected
-    buttonNames = ['EU NUTS0', 'EU NUTS1', 'EU NUTS2']
+    buttonNames = ['Income levels', 'Homlessness', 'Household overcrowding']
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
           document.getElementById(x).className = "";
         });
     }
-   //Toggle for NUTS 0
+   
 
 
    document.getElementById('toggle-nuts0').addEventListener('click', function() {
-       toggleLayer('Index_mult_dep');
+       toggleLayer('Income_layer');
        buttonNames.forEach(function(x) {
        document.getElementById(x).className = "";
      });
@@ -270,7 +304,7 @@ map.addSource('Index_mult_dep', {
 
 
     document.getElementById('toggle-nuts1').addEventListener('click', function() {
-        toggleLayer('Food_banks');
+        toggleLayer('Homelessness');
         buttonNames.forEach(function(x) {
         document.getElementById(x).className = "";
       });
@@ -281,7 +315,7 @@ map.addSource('Index_mult_dep', {
 
 
     document.getElementById('toggle-nuts2').addEventListener('click', function() {
-        toggleLayer('Food_outlets');
+        toggleLayer('Overcrowding');
         buttonNames.forEach(function(x) {
         document.getElementById(x).className = "";
       });
