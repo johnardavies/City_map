@@ -194,19 +194,19 @@ map.addLayer({
             property:'BusinessType',
             type: 'categorical',
             stops: [
-            // encode URI to deal with the issues about special characters
-             [encodeURI('Restaurant/Cafe/Canteen'), '#8dd3c7'],
-             [encodeURI('Retailers - other'), '#ccebc5'],
-             [encodeURI('Takeaway/sandwich shop'), '#bebada'],
-              [encodeURI('Pub/bar/nightclub'), '#fb8072'],
-             [encodeURI('Hospitals/Childcare/Caring Premises'), '#80b1d3'],
-              [encodeURI('School/college/university'), '#fdb462'],
-              [encodeURI('Other catering premises'), '#b3de69'],
-             [encodeURI('Hotel/bed & breakfast/guest house'), '#ccc'],
-              [encodeURI('Retailers - supermarkets/hypermarkets'), '#fb8072'],
-              [encodeURI('Mobile caterer'), '#80b1d3'],
-               [encodeURI('Distributors/Transporters'), '#fdb462'],
-               [encodeURI('Manufacturers/packers')	, '#fdb462'] 
+ 
+             ['Restaurant/Cafe/Canteen', '#8dd3c7'],
+             ['Retailers - other', '#ccebc5'],
+             ['Takeaway/sandwich shop', '#bebada'],
+              ['Pub/bar/nightclub', '#fb8072'],
+             ['Hospitals/Childcare/Caring Premises', '#80b1d3'],
+              ['School/college/university', '#fdb462'],
+              ['Other catering premises', '#b3de69'],
+             ['Hotel/bed & breakfast/guest house', '#ccc'],
+              ['Retailers - supermarkets/hypermarkets', '#fb8072'],
+              ['Mobile caterer', '#80b1d3'],
+               ['Distributors/Transporters', '#fdb462'],
+               ['Manufacturers/packers'	, '#fdb462'] 
             ]
           }
 
@@ -346,14 +346,9 @@ new mapboxgl.Popup()
 
 
 var food_outletLegendEl = document.getElementById('food-outlet-legend');
-map.on('zoom', function () {
-if (map.getZoom() > zoomThreshold) {
-food_outletLegendEl.style.display = 'block';
-} else {
-food_outletLegendEl.style.display = 'none';
 
-}
-});
+food_outletLegendEl.style.display = 'block';
+
 
 
 
