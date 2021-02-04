@@ -1,2 +1,2 @@
-# Map of Liverpool data using Kepler
+# This is a mapboxGL map of the city of Liverpool
 
