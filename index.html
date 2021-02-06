@@ -17,6 +17,7 @@
          <a href="#" id="toggle-nuts0">Income levels</a>
         <a href="#" id="toggle-nuts1">Morbidity levels</a>
         <a href="#" id="toggle-nuts2">Household overcrowding</a>
+        <a href="#" id="toggle-nuts3">Education post 16</a>
         
     </nav>
     <div class='map-overlay top'>
@@ -112,23 +113,35 @@ function toggleLayer (layerName) {
 
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Homelessness', 'visibility', 'none');
-        
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+        map.setLayoutProperty('Education', 'visibility', 'none'); 
 
      }
      else if (layerName=='Income_layer' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-        map.setLayoutProperty('Homelessness', 'visibility', 'none');
-        
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+        map.setLayoutProperty('Education', 'visibility', 'none');
      }
-     else if (layerName=='Homelessness' && currentState=='none'){
+     else if (layerName=='Morbidity' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Overcrowding', 'visibility', 'none');
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
-       
+        map.setLayoutProperty('Education', 'visibility', 'none');
      }
-
+     else if (layerName=='Education' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+    
+     }
+     else if (layerName=='Overcrowding' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
+        map.setLayoutProperty('Education', 'visibility', 'none');
+     }
     else {
           newProperty = undefined;
        map.setLayoutProperty(layerName, 'visibility', newProperty);
@@ -167,7 +180,7 @@ map.addLayer({
 // Adds in the Food standards agency food outlet data 
 map.addSource('Food_outlets', {
   type: 'geojson',
-  data: './Food_outlets_geo.geojson'
+  data: 'Food_outlets_geo.geojson'
 });
 
 
@@ -212,7 +225,7 @@ map.addLayer({
 
 
 // Add in the index of multiple deprivation data
-map.addSource('/Data/Index_mult_dep', {
+map.addSource('Index_mult_dep', {
     type: 'geojson',
     data: 'Liverpool.geojson'
   });
@@ -258,11 +271,9 @@ map.addLayer({
 } ,'Food_outlets' );
 
 
-
-
-  //Adds in the homelessness data as a layer called 'Homelessness'
+  //Adds in the Morbidity data as a layer called 'Morbidity'
   map.addLayer({
-    'id': 'Homelessness',
+    'id': 'Morbidity',
     'source':'Index_mult_dep',
     'layout': {
       'visibility': 'none',
@@ -279,9 +290,30 @@ map.addLayer({
 } ,'Food_outlets' );
 
 
+//Adds in the Morbidity data as a layer called 'Morbidity'
+map.addLayer({
+    'id': 'Education',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{ 
+        property: 'Staying on in education post 16 indicator_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+  
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
+
+
+
 
 // Sets up the buttons that allow the layers to be selected
-    buttonNames = ['Income levels', 'Homlessness', 'Household overcrowding']
+    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16']
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
@@ -304,7 +336,7 @@ map.addLayer({
 
 
     document.getElementById('toggle-nuts1').addEventListener('click', function() {
-        toggleLayer('Homelessness');
+        toggleLayer('Morbidity');
         buttonNames.forEach(function(x) {
         document.getElementById(x).className = "";
       });
@@ -322,6 +354,16 @@ map.addLayer({
         resetNavMenu();
         this.className = 'active';
     });
+
+    document.getElementById('toggle-nuts3').addEventListener('click', function() {
+        toggleLayer('Education');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+
 
 
    
