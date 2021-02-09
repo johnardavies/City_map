@@ -1,4 +1,4 @@
-## This is a mapboxGL map of the city of Liverpool
+## This is a mapboxGL map of the city of Liverpool (The map is work in progress)
 
 The map itself is visible at:
 https://johnardavies.github.io/City_map/#
