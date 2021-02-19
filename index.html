@@ -14,11 +14,12 @@
     <img src="./nesta_logo.png" id='logo' />
     
     <nav id="menu">
-         <a href="#" id="toggle-nuts0">Income levels</a>
+        <a href="#" id="toggle-nuts0">Income levels</a>
         <a href="#" id="toggle-nuts1">Morbidity levels</a>
         <a href="#" id="toggle-nuts2">Household overcrowding</a>
         <a href="#" id="toggle-nuts3">Education post 16</a>
-        
+        <a href="#" id="toggle-nuts4">Food access</a>
+        <a href="#" id="toggle-nuts5">Obesity measure</a>
     </nav>
     <div class='map-overlay top'>
 
@@ -115,32 +116,56 @@ function toggleLayer (layerName) {
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
         map.setLayoutProperty('Morbidity', 'visibility', 'none');
         map.setLayoutProperty('Education', 'visibility', 'none'); 
-
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
      }
      else if (layerName=='Income_layer' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Overcrowding', 'visibility', 'none');
         map.setLayoutProperty('Morbidity', 'visibility', 'none');
         map.setLayoutProperty('Education', 'visibility', 'none');
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
      }
      else if (layerName=='Morbidity' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Overcrowding', 'visibility', 'none');
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
         map.setLayoutProperty('Education', 'visibility', 'none');
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
      }
      else if (layerName=='Education' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Overcrowding', 'visibility', 'none');
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
         map.setLayoutProperty('Morbidity', 'visibility', 'none');
-    
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
      }
      else if (layerName=='Overcrowding' && currentState=='none'){
         map.setLayoutProperty(layerName, 'visibility', undefined);
         map.setLayoutProperty('Morbidity', 'visibility', 'none');
         map.setLayoutProperty('Income_layer', 'visibility', 'none');
         map.setLayoutProperty('Education', 'visibility', 'none');
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
+     }
+    else if (layerName=='FoodAccess' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
+        map.setLayoutProperty('Education', 'visibility', 'none');
+        map.setLayoutProperty('Obesity', 'visibility', 'none');
+        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
+     }
+       else if (layerName=='Obesity' && currentState=='none'){
+        map.setLayoutProperty(layerName, 'visibility', undefined);
+        map.setLayoutProperty('Morbidity', 'visibility', 'none');
+        map.setLayoutProperty('Income_layer', 'visibility', 'none');
+        map.setLayoutProperty('Education', 'visibility', 'none');
+        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
+        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
      }
     else {
           newProperty = undefined;
@@ -227,10 +252,56 @@ map.addLayer({
 // Add in the index of multiple deprivation data
 map.addSource('Index_mult_dep', {
     type: 'geojson',
-    data: 'Liverpool.geojson'
+    data: 'Liverpool_lsoa.geojson'
   });
 
-  
+
+   // Add in the index of multiple deprivation data
+map.addSource('Ward_level_data', {
+    type: 'geojson',
+    data: 'Liverpool_wards.geojson'
+  });
+
+
+
+  //Adds the income data
+  map.addLayer({
+    'id': 'Obesity',
+    'source':'Ward_level_data',
+    'layout': {
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{
+        property: 'Ward_Reception_Overweight_Obese_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
+
+  //Adds the food access
+  map.addLayer({
+    'id': 'FoodAccess',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{
+        property: 'Score_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
+
 
 
 
@@ -313,7 +384,7 @@ map.addLayer({
 
 
 // Sets up the buttons that allow the layers to be selected
-    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16']
+    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure"]
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
@@ -363,6 +434,25 @@ map.addLayer({
         resetNavMenu();
         this.className = 'active';
     });
+
+    document.getElementById('toggle-nuts4').addEventListener('click', function() {
+        toggleLayer('FoodAccess');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+
+    document.getElementById('toggle-nuts5').addEventListener('click', function() {
+        toggleLayer('Obesity');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+ 
 
 
 
