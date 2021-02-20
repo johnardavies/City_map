@@ -109,70 +109,25 @@ var scale=1 ;
 // Function that makes sure only one layer shows at one time. Should be tidied up
 function toggleLayer (layerName) {
      var currentState = map.getLayoutProperty(layerName, 'visibility');
-     if (layerName=='Overcrowding' && currentState=='none')
-     {
 
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none'); 
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-     }
-     else if (layerName=='Income_layer' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none');
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-     }
-     else if (layerName=='Morbidity' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none');
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-     }
-     else if (layerName=='Education' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-     }
-     else if (layerName=='Overcrowding' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none');
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-     }
-    else if (layerName=='FoodAccess' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none');
-        map.setLayoutProperty('Obesity', 'visibility', 'none');
-        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-     }
-       else if (layerName=='Obesity' && currentState=='none'){
-        map.setLayoutProperty(layerName, 'visibility', undefined);
-        map.setLayoutProperty('Morbidity', 'visibility', 'none');
-        map.setLayoutProperty('Income_layer', 'visibility', 'none');
-        map.setLayoutProperty('Education', 'visibility', 'none');
-        map.setLayoutProperty('FoodAccess', 'visibility', 'none');
-        map.setLayoutProperty('Overcrowding', 'visibility', 'none');
-     }
-    else {
+     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding']
+     for (var i = 0; i < layer_list.length; i++) {
+     
+     if  (layer_list[i]==layerName && currentState=='none'){
+       map.setLayoutProperty(layerName, 'visibility', undefined);
+      }
+
+     else if  (layer_list[i]!=layerName && currentState=='none'){
+       map.setLayoutProperty(layer_list[i], 'visibility', 'none');
+     } 
+      
+     else {
           newProperty = undefined;
        map.setLayoutProperty(layerName, 'visibility', newProperty);
       }
     }
-
+    }
+    
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // when the map loads to the following
