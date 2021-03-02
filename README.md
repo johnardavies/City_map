@@ -11,10 +11,12 @@ https://ratings.food.gov.uk/default/en-GB
 The index of multiple deprivation data that hae been mapped is available from
 https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0
 
+**Data processing for map**
+
 The processing of the food standards agency and Food banks data is done using the notebook
 Liverpool_map.ipynb the files and the Dockerfile in the map_data_processing folder
 
-To run build the container image for the data processing after cloning the repo, tagging it as map_processing
+To build the container image for the data processing after cloning the repo, tagging it as map_processing
 ```
 $ docker build --tag map_processing map_data_processing
 ```
