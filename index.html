@@ -11,8 +11,7 @@
   </head>
   <body>
     <div id='map'></div>
-    <img src="./nesta_logo.png" id='logo' />
-    
+    <img src="./nesta_logo.png" id='logo' />       
     <nav id="menu">
         <a href="#" id="toggle-nuts0">Income levels</a>
         <a href="#" id="toggle-nuts1">Morbidity levels</a>
@@ -35,6 +34,13 @@
           <h4>Food supply outlets</h4>
           <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
           <div><span style="background-color: red"></span>Food banks</div>
+          <div><span style="background-color: #ffff00"></span>Food pantries</div>
+          <div><span style="background-color:  #0000ff"></span>Free food initatives</div>
+          <div><span style="background-color: #008000"></span>Community cafes</div>
+          <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
+            <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
+          <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
+          <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
           <div><span style="background-color:#ccebc5"></span>Other retailers</div>
           <div><span style="background-color: #bebada"></span>Takeaway and sandwich shops</div>
           <div><span style="background-color: #fb8072"></span>Pub/bar/nightclub </div>
@@ -211,6 +217,50 @@ map.addLayer({
           }
           
 }, 'Food_banks');
+
+
+
+// Adds in the Food standards agency food outlet data
+map.addSource('Food_affordability', {
+  type: 'geojson',
+  data: 'Affordable_food_iniatives.geojson'
+});
+
+
+map.addLayer({
+'id': 'Food_affordability_layer',
+'type': 'circle',
+'source': 'Food_affordability',
+'layout': {
+//'icon-image': 'custom-marker'
+},
+ 'paint': {
+   //            'circle-radius': {
+   //            'base': 3 ,
+   //            'stops': [[12, 3], [22, 140]]
+   //         },
+           // 'circle-color': "#d95f0e", // Was '#A52A2A'
+           'circle-color': {
+            property:'Category',
+            type: 'categorical',
+            stops: [
+
+             ['Pantry', '#ffff00'],
+             ['Free_food_initatives', '#0000ff'],
+             ['Community_cafes', '#008000'],
+      
+            ]
+          }
+}
+}, 'Food_banks');
+
+
+
+
+
+
+
+
 
 
 
