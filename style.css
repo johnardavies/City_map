@@ -82,7 +82,7 @@ div#blur {
   font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
   padding: 10px; /* Is the layer beyond the core of the box*/
   position: relative;
-  width: 250px;
+  width: 230px;
   z-index: 1;/* appears in front of an element with a lower stack order */
 }
 
