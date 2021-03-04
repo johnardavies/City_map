@@ -38,7 +38,7 @@
           <div><span style="background-color:  #0000ff"></span>Free food initatives</div>
           <div><span style="background-color: #008000"></span>Community cafes</div>
           <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-            <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
+          <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
           <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
           <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
           <div><span style="background-color:#ccebc5"></span>Other retailers</div>
@@ -61,8 +61,6 @@
           <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
           <div><span style="background-color: #67a9cf"></span>40%-20%</div>
           <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
-          
-
           </div>
          
          
@@ -246,22 +244,13 @@ map.addLayer({
             stops: [
 
              ['Pantry', '#ffff00'],
-             ['Free_food_initatives', '#0000ff'],
+             ['Free_food_initatives', '#ffff00'],
              ['Community_cafes', '#008000'],
       
             ]
           }
 }
 }, 'Food_banks');
-
-
-
-
-
-
-
-
-
 
 
 // Add in the index of multiple deprivation data
@@ -315,8 +304,6 @@ map.addSource('Ward_level_data', {
 
   //inserted before the food outlets layer
 } ,'Food_outlets' );
-
-
 
 
 
@@ -395,10 +382,9 @@ map.addLayer({
 } ,'Food_outlets' );
 
 
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Sets up the buttons that allow the layers to be selected
+
     buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure"]
 
     function resetNavMenu() {
@@ -525,10 +511,37 @@ new mapboxgl.Popup()
 .addTo(map);
 });
 
+/////////////////////////////////////////////////////////
+// Add popups to accessible food outlets
+///////////////////////////////////////////////////////
+
+map.on('click', 'Food_affordability_layer', function (e) {
+var coordinates = e.features[0].geometry.coordinates.slice();
+var category = e.features[0].properties.Category;
+var initative_name = e.features[0].properties.Name;
+var days_open= e.features[0].properties.Day
+
+// Ensure that if the map is zoomed out such that multiple
+// copies of the feature are visible, the popup appears
+// over the copy being pointed to.
+while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+}
+
+new mapboxgl.Popup()
+.setLngLat(coordinates)
+.setHTML('<h3>' +initative_name + '</h3><p>' + category + '</p><p>' +'Days open ' +days_open + '</p>')
+
+.addTo(map);
+});
+
+
+
 
 var food_outletLegendEl = document.getElementById('food-outlet-legend');
 
 food_outletLegendEl.style.display = 'block';
+
 
 
 
