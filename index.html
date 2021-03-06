@@ -128,8 +128,26 @@
   ];
   var zoomThreshold=4;
 
-// [-2.829527	,53.528475]
- 
+
+  var marker = new mapboxgl.Marker({
+        'color': '#314ccd'
+      });
+
+
+
+// Create variables to use in getIso()
+      var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
+      var lon = -2.985927901788232 ;
+      var lat = 53.40702823788882;
+      var profile = 'walking';
+      var minutes = 10;
+
+   var lngLat = {
+        lon: lon,
+        lat: lat
+      };
+
+
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/basic-v9',  
@@ -410,6 +428,39 @@ map.addLayer({
   
   //inserted before the food outlets layer
 } ,'Food_outlets' );
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The isochrone parts
+
+map.addSource('iso', {
+          type: 'geojson',
+          data: {
+            'type': 'FeatureCollection',
+            'features': []
+          }
+        });
+
+        map.addLayer(
+          {
+            'id': 'isoLayer',
+            'type': 'fill',
+            'source': 'iso',
+            'layout': {},
+            'paint': {
+              'fill-color': '#5a3fc0',
+              'fill-opacity': 0.3
+            }
+          },
+          'Food_outlets'
+        );
+
+        // Initialize the marker at the query coordinates
+        marker.setLngLat(lngLat).addTo(map);
+
+        // Make the API call
+        getIso();
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
