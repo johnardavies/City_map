@@ -7,7 +7,14 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
     <link href='./style.css' rel='stylesheet' />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/peity/3.2.1/jquery.peity.js"></script>
+    <!-- Mapbox Assembly -->
+    <link
+      href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-assembly/{ASSEMBLY}}/assembly.js"></script>
+     <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     <div id='map'></div>
@@ -61,20 +68,16 @@
           <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
           <div><span style="background-color: #67a9cf"></span>40%-20%</div>
           <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
-          </div>
-         
-         
-      
-       
-
-       
-    
-          
+          </div>       
 
     <script>
 
-function colorDictList2Array(colorDictList) {
-        arr = [];
+
+  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+
+      // The function to colour the map layers
+       function colorDictList2Array(colorDictList) {
+           arr = [];
 
         for (var i=0; i < colorDictList.length; i++) {
             colorDict = colorDictList[i];
@@ -82,6 +85,9 @@ function colorDictList2Array(colorDictList) {
         }
         return arr;
       }
+
+
+     // The colours for the quintiles
       var growthColorStops = [
         {offset: 1, color: "#fddbc7"},
         {offset: 2, color: "#f7f7f7"}, 
@@ -89,8 +95,32 @@ function colorDictList2Array(colorDictList) {
         {offset: 4, color: "#67a9cf"},
         {offset: 5, color: "#2166ac"},
 
-      ] 
-var scale=1 ;
+      ]
+
+      // The  function that sets up the Isochrone API query then makes an Ajax call
+      function getIso() {
+        var query =
+          urlBase +
+          profile +
+          '/' +
+          lon +
+          ',' +
+          lat +
+          '?contours_minutes=' +
+          minutes +
+          '&polygons=true&access_token=' +
+          mapboxgl.accessToken;
+
+        $.ajax({
+          method: 'GET',
+          url: query
+        }).done(function (data) {
+          // Set the 'iso' source's data to what's returned by the API query
+          map.getSource('iso').setData(data);
+        });
+      }
+
+  var scale=1 ;
   var bounds = [
   
  [-3.066758*scale, 53.2859873*scale ], // Southwest coordinates  
@@ -99,7 +129,7 @@ var scale=1 ;
   var zoomThreshold=4;
 
 // [-2.829527	,53.528475]
-  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+ 
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/basic-v9',  
@@ -107,8 +137,8 @@ var scale=1 ;
       center: [ -2.92413 , 53.40938],
       minZoom: 0.1,
       zoom: 10 ,  // The bigger the zoom number the closer in you go zoom was 8
-       pitch: 40, // the angle of the view
-    bearing: 0,  // the direction the map view is pointing
+      pitch: 40, // the angle of the view
+      bearing: 0,  // the direction the map view is pointing
       maxBounds: bounds,
   });
 
