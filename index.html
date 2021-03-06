@@ -15,6 +15,10 @@
     <script src="https://api.mapbox.com/mapbox-assembly/{ASSEMBLY}}/assembly.js"></script>
      <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <!-- d3 -->
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    
   </head>
   <body>
     <div id='map'></div>
@@ -28,7 +32,6 @@
         <a href="#" id="toggle-nuts5">Reception class obesity measure</a>
     </nav>
     <div class='map-overlay top'>
-
       <!-- Slider commented out<div class='map-overlay-inner'>
         <label>Filter <span id='slider-value'></span></label>
         <input id='slider' type='range' min='0' max='60' step='1' value='0' />
@@ -59,7 +62,6 @@
           <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
           <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
           <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-          
           </div>  
         <div id="scale-legend" class="scale-legend" style="display: block">
           <h4>Scale</h4>
@@ -265,7 +267,7 @@ map.addLayer({
 }, 'Food_banks');
 
 
-
+     
 // Adds in the Food standards agency food outlet data
 map.addSource('Food_affordability', {
   type: 'geojson',
@@ -432,6 +434,34 @@ map.addLayer({
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // The isochrone parts
+
+
+d3.json(
+'Affordable_food_iniatives.geojson',
+function (err, data) {
+if (err) throw err;
+ 
+// save full coordinate list for later
+var coordinates = data.features[1].geometry.coordinates;
+ 
+// start by showing just the first coordinate
+////data.features[0].geometry.coordinates = [coordinates[0]];
+//console.log(coordinates); 
+  
+
+
+for (var i=0; i < data.features.length; i++) {
+
+var coordinates = data.features[i].geometry.coordinates;
+console.log(coordinates)   
+        }
+ 
+
+}
+
+)
+
+
 
 map.addSource('iso', {
           type: 'geojson',
