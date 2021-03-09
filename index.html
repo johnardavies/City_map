@@ -30,6 +30,7 @@
         <a href="#" id="toggle-nuts3">Education post 16</a>
         <a href="#" id="toggle-nuts4">E-food deserts index</a>
         <a href="#" id="toggle-nuts5">Reception class obesity measure</a>
+        <a href="#" id="toggle-nuts6">Show 10 minute walking time</a>
     </nav>
     <div class='map-overlay top'>
       <!-- Slider commented out<div class='map-overlay-inner'>
@@ -97,47 +98,15 @@
         {offset: 4, color: "#67a9cf"},
         {offset: 5, color: "#2166ac"},
       ]
-/*
-      // The  function that sets up the Isochrone API query then makes an Ajax call
-      function getIso(lon, lat) {
-        var query =
-          urlBase +
-          profile +
-          '/' +
-          lon +
-          ',' +
-          lat +
-          '?contours_minutes=' +
-          minutes +
-          '&polygons=true&access_token=' +
-          mapboxgl.accessToken;
-
-        $.ajax({
-          method: 'GET',
-          url: query
-        }).done(function (data) {
-          // Set the 'iso' source's data to what's returned by the API query
-          map.getSource('iso').setData(data);
-        });
-      }
-
-*/
 
 
-// Create variables to use in getIso()
+
+// Create variables to use in the travel time api calls
       var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
       var profile = 'walking';
       var minutes = 10;
-/*
-   var lngLat = {
-        lon: lon,
-        lat: lat
-      };
-*/
 
-
-
-
+// Function that is used to make the travel time api calls
   function make_api(coord) {
         console.log(coord)
         var query =
@@ -155,11 +124,6 @@
           }
 
 
-
-
-
-
-
   var scale=1 ;
   var bounds = [
   
@@ -172,20 +136,6 @@
   var marker = new mapboxgl.Marker({
         'color': '#314ccd'
       });
-
-
-
-// Create variables to use in getIso()
-      var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
-  //  var lon = -2.985927901788232 ;
-  //  var lat = 53.40702823788882;
-      var profile = 'walking';
-      var minutes = 10;
-
-//   var lngLat = {
-//        lon: lon,
-//        lat: lat
-//      };
 
 
   var map = new mapboxgl.Map({
@@ -208,11 +158,11 @@
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Function that makes sure only one layer shows at one time. Should be tidied up
+// Function that makes sure only one layer shows at one time. 
 function toggleLayer (layerName) {
      var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding']
+     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding', 'isolayer']
      for (var i = 0; i < layer_list.length; i++) {
      
      if  (layer_list[i]==layerName && currentState=='none'){
@@ -484,7 +434,7 @@ map.addSource('iso', {
             'id': 'isoLayer',
             'type': 'fill',
             'source': 'iso',
-            'layout': {},
+            'layout': { 'visibility': 'none'},
             'paint': {
               'fill-color': '#5a3fc0',
               'fill-opacity': 0.3
@@ -560,6 +510,22 @@ for (i=0; i < results.length; ++i){
 //apply map_results to the map
 map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results })
 
+  map.addLayer(
+          {
+            'id': 'isolayer',
+            'type': 'fill',
+            'source': 'iso',
+            'layout': { 'visibility': 'none'},
+            'paint': {
+              'fill-color': '#5a3fc0',
+              'fill-opacity': 0.3
+            }
+          },
+          'Food_outlets'
+        );
+
+
+
 })
 
 
@@ -572,7 +538,7 @@ map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Sets up the buttons that allow the layers to be selected
 
-    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure"]
+    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure", "10 minute walking time"]
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
@@ -642,6 +608,15 @@ map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results
     });
  
 
+ document.getElementById('toggle-nuts6').addEventListener('click', function() {
+        toggleLayer('isolayer');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+ 
 
 
    
