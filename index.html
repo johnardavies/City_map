@@ -100,7 +100,7 @@
       ]
 
       // The  function that sets up the Isochrone API query then makes an Ajax call
-      function getIso() {
+      function getIso(lon, lat) {
         var query =
           urlBase +
           profile +
@@ -122,6 +122,28 @@
         });
       }
 
+
+  function make_api(coord) {
+        var query =
+          urlBase +
+          profile +
+          '/' +
+          coord[0] +
+          ',' +
+          coord[1] +
+          '?contours_minutes=' +
+          minutes +
+          '&polygons=true&access_token=' +
+          mapboxgl.accessToken;
+       return query
+          }
+
+
+
+
+
+
+
   var scale=1 ;
   var bounds = [
   
@@ -139,8 +161,8 @@
 
 // Create variables to use in getIso()
       var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
-      var lon = -2.985927901788232 ;
-      var lat = 53.40702823788882;
+    var lon = -2.985927901788232 ;
+    var lat = 53.40702823788882;
       var profile = 'walking';
       var minutes = 10;
 
@@ -194,10 +216,8 @@ function toggleLayer (layerName) {
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // when the map loads to the following
+// when the map loads to the following
 map.on('load', function() {
-
-
 
 
 // Adds in the foodbank data 
@@ -447,20 +467,20 @@ var coordinates = data.features[1].geometry.coordinates;
 // start by showing just the first coordinate
 ////data.features[0].geometry.coordinates = [coordinates[0]];
 //console.log(coordinates); 
-  
 
+// creates an array  
+var arr = [];
 
-for (var i=0; i < data.features.length; i++) {
+for (var i=0; i < data.features.length-1; i++) {
 
-var coordinates = data.features[i].geometry.coordinates;
-console.log(coordinates)   
-        }
+  var coordinates = data.features[i].geometry.coordinates;
+   arr.push(coordinates)
+    }
+
  
+var  map_ar = arr.map(make_api);
 
-}
-
-)
-
+var result , results = [], deferred, deferreds = [], map_results=[];
 
 
 map.addSource('iso', {
@@ -485,11 +505,62 @@ map.addSource('iso', {
           'Food_outlets'
         );
 
-        // Initialize the marker at the query coordinates
-        marker.setLngLat(lngLat).addTo(map);
+        
 
-        // Make the API call
-        getIso();
+// 1. Make multiple AJAX calls to a Server
+for (i=0; i < map_ar.length; ++i){
+  console.log(map_ar[i])
+  deferred = $.ajax(map_ar[i] , {
+    success: function(result) {
+  //   2. Store the results in an array
+    results.push(result);
+  }
+
+});
+deferreds.push(deferred);
+}
+
+console.log(results[0])
+
+$.when.apply($, deferreds).then(function() {
+  // 3. Process the result array.
+//map.getSource('iso').setData({'type': 'FeatureCollection','features':results   });
+for (i=0; i < results.length; ++i){
+
+    map_results.push(results[i].features[0]);
+  }
+
+
+map.getSource('iso').setData({'type': 'FeatureCollection',
+'features':map_results
+//[results[0].features[0], results[1].features[0]]
+
+
+})
+
+//$.when.apply($, deferreds).then(function() {
+  // 3. Process the result array.
+
+ //map.getSource('iso').setData({'type': 'FeatureCollection','features':[[results]]   });
+
+
+
+});
+
+});
+
+
+/*
+
+
+var calls=$.ajax({
+   url:'url',
+     method: 'GET',
+   data:{
+      map1:JSON.stringify(map_ar)
+   }
+});
+*/
 
 
 
