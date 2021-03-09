@@ -7,7 +7,18 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
     <link href='./style.css' rel='stylesheet' />
-    <script src="//cdnjs.cloudflare.com/ajax/libs/peity/3.2.1/jquery.peity.js"></script>
+    <!-- Mapbox Assembly -->
+    <link
+      href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://api.mapbox.com/mapbox-assembly/{ASSEMBLY}}/assembly.js"></script>
+     <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <!-- d3 -->
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    
   </head>
   <body>
     <div id='map'></div>
@@ -19,9 +30,9 @@
         <a href="#" id="toggle-nuts3">Education post 16</a>
         <a href="#" id="toggle-nuts4">E-food deserts index</a>
         <a href="#" id="toggle-nuts5">Reception class obesity measure</a>
+        <a href="#" id="toggle-nuts6">Show 10 minute walking time</a>
     </nav>
     <div class='map-overlay top'>
-
       <!-- Slider commented out<div class='map-overlay-inner'>
         <label>Filter <span id='slider-value'></span></label>
         <input id='slider' type='range' min='0' max='60' step='1' value='0' />
@@ -32,11 +43,11 @@
    <!--     <div class='map-overlay' id='legend'></div> -->
         <div id="legend" class="legend" style="display: block">
           <h4>Food supply outlets</h4>
-          <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
           <div><span style="background-color: red"></span>Food banks</div>
           <div><span style="background-color: #ffff00"></span>Food pantries</div>
           <div><span style="background-color:  blue"></span>Free food initatives</div>
           <div><span style="background-color: #008000"></span>Community cafes</div>
+          <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
           <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
           <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
           <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
@@ -52,7 +63,6 @@
           <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
           <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
           <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-          
           </div>  
         <div id="scale-legend" class="scale-legend" style="display: block">
           <h4>Scale</h4>
@@ -61,20 +71,16 @@
           <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
           <div><span style="background-color: #67a9cf"></span>40%-20%</div>
           <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
-          </div>
-         
-         
-      
-       
-
-       
-    
-          
+          </div>       
 
     <script>
 
-function colorDictList2Array(colorDictList) {
-        arr = [];
+
+  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+
+      // The function to colour the map layers
+       function colorDictList2Array(colorDictList) {
+           arr = [];
 
         for (var i=0; i < colorDictList.length; i++) {
             colorDict = colorDictList[i];
@@ -82,15 +88,43 @@ function colorDictList2Array(colorDictList) {
         }
         return arr;
       }
+
+
+     // The colours for the quintiles
       var growthColorStops = [
         {offset: 1, color: "#fddbc7"},
         {offset: 2, color: "#f7f7f7"}, 
         {offset: 3, color: "#d1e5f0"},
         {offset: 4, color: "#67a9cf"},
         {offset: 5, color: "#2166ac"},
+      ]
 
-      ] 
-var scale=1 ;
+
+
+// Create variables to use in the travel time api calls
+      var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
+      var profile = 'walking';
+      var minutes = 10;
+
+// Function that is used to make the travel time api calls
+  function make_api(coord) {
+        console.log(coord)
+        var query =
+          urlBase +
+          profile +
+          '/' +
+          coord[0] +
+          ',' +
+          coord[1] +
+          '?contours_minutes=' +
+          minutes +
+          '&polygons=true&access_token=' +
+          mapboxgl.accessToken;
+       return query
+          }
+
+
+  var scale=1 ;
   var bounds = [
   
  [-3.066758*scale, 53.2859873*scale ], // Southwest coordinates  
@@ -98,8 +132,12 @@ var scale=1 ;
   ];
   var zoomThreshold=4;
 
-// [-2.829527	,53.528475]
-  mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+
+  var marker = new mapboxgl.Marker({
+        'color': '#314ccd'
+      });
+
+
   var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/basic-v9',  
@@ -107,8 +145,8 @@ var scale=1 ;
       center: [ -2.92413 , 53.40938],
       minZoom: 0.1,
       zoom: 10 ,  // The bigger the zoom number the closer in you go zoom was 8
-       pitch: 40, // the angle of the view
-    bearing: 0,  // the direction the map view is pointing
+      pitch: 40, // the angle of the view
+      bearing: 0,  // the direction the map view is pointing
       maxBounds: bounds,
   });
 
@@ -120,11 +158,11 @@ var scale=1 ;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Function that makes sure only one layer shows at one time. Should be tidied up
+// Function that makes sure only one layer shows at one time. 
 function toggleLayer (layerName) {
      var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding']
+     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding', 'isolayer']
      for (var i = 0; i < layer_list.length; i++) {
      
      if  (layer_list[i]==layerName && currentState=='none'){
@@ -144,10 +182,8 @@ function toggleLayer (layerName) {
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // when the map loads to the following
+// when the map loads to the following
 map.on('load', function() {
-
-
 
 
 // Adds in the foodbank data 
@@ -217,7 +253,7 @@ map.addLayer({
 }, 'Food_banks');
 
 
-
+     
 // Adds in the Food standards agency food outlet data
 map.addSource('Food_affordability', {
   type: 'geojson',
@@ -382,10 +418,127 @@ map.addLayer({
 } ,'Food_outlets' );
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The isochrone layer
+
+map.addSource('iso', {
+          type: 'geojson',
+          data: {
+            'type': 'FeatureCollection',
+            'features': []
+          }
+        });
+
+        map.addLayer(
+          {
+            'id': 'isoLayer',
+            'type': 'fill',
+            'source': 'iso',
+            'layout': { 'visibility': 'none'},
+            'paint': {
+              'fill-color': '#5a3fc0',
+              'fill-opacity': 0.3
+            }
+          },
+          'Food_outlets'
+        );
+// set up arrays to hold the coordinates
+var arr=[];
+var arr_bank=[];
+
+d3.json(
+'Affordable_food_iniatives.geojson',
+function (err, data) {
+if (err) throw err;
+ 
+// parse the food affordability coordinates into an array
+
+for (var i=0; i < data.features.length; i++) {
+
+  var coordinates = data.features[i].geometry.coordinates;
+   arr.push(coordinates)
+    }
+
+
+// Loads the foodbanks data
+
+d3.json(
+'Foodbanks.geojson',
+function (err, data2) {
+if (err) throw err;
+
+
+// parse the foodbank coordinates into an arrary arr_bank
+for (var i=0; i < data2.features.length ; i++) {
+   var coordinates_foodbank = data2.features[i].geometry.coordinates;
+   arr_bank.push(coordinates_foodbank)
+    }
+
+
+// stick the coordinates of the food banks and the affordable food initatives together 
+var coord_call = arr_bank.concat(arr); 
+
+//Convert the coordinates into API call format
+var  map_ar = coord_call.map(make_api);
+
+// sets up variables 
+var result , results = [], deferred, deferreds = [], map_results=[];
+        
+
+// 1. Make multiple AJAX calls to a Server
+for (i=0; i < map_ar.length; ++i){
+
+  deferred = $.ajax(map_ar[i] , {
+    success: function(result) {
+  //   2. Store the results in an array
+    results.push(result);
+  }
+
+});
+deferreds.push(deferred);
+}
+
+// wait for the api calls to finish and then apply them to the map
+$.when.apply($, deferreds).then(function() {
+  // 3. Process the result array.
+
+for (i=0; i < results.length; ++i){
+
+    map_results.push(results[i].features[0]);
+  }
+
+//apply map_results to the map
+map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results })
+
+  map.addLayer(
+          {
+            'id': 'isolayer',
+            'type': 'fill',
+            'source': 'iso',
+            'layout': { 'visibility': 'none'},
+            'paint': {
+              'fill-color': '#5a3fc0',
+              'fill-opacity': 0.3
+            }
+          },
+          'Food_outlets'
+        );
+
+
+
+})
+
+
+// close the load foodank geojson
+});
+// close the affordable food iniatives geojson
+});
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Sets up the buttons that allow the layers to be selected
 
-    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure"]
+    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure", "10 minute walking time"]
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
@@ -455,6 +608,15 @@ map.addLayer({
     });
  
 
+ document.getElementById('toggle-nuts6').addEventListener('click', function() {
+        toggleLayer('isolayer');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+ 
 
 
    
