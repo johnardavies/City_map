@@ -24,6 +24,7 @@
     <div id='map'></div>
     <img src="./nesta_logo.png" id='logo' />       
     <nav id="menu">
+        <a href="#" id="toggle-nuts7">Population levels</a>
         <a href="#" id="toggle-nuts0">Income levels</a>
         <a href="#" id="toggle-nuts1">Morbidity levels</a>
         <a href="#" id="toggle-nuts2">Household overcrowding</a>
@@ -162,7 +163,7 @@
 function toggleLayer (layerName) {
      var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-     var layer_list=['Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding', 'isolayer']
+     var layer_list=['Population_layer','Income_layer','Morbidity','Education','FoodAccess','Obesity', 'Overcrowding', 'isolayer']
      for (var i = 0; i < layer_list.length; i++) {
      
      if  (layer_list[i]==layerName && currentState=='none'){
@@ -442,6 +443,25 @@ map.addLayer({
 } ,'Food_outlets' );
 
 
+
+ //Adds the food access
+  map.addLayer({
+    'id': 'Population_layer',
+    'source':'Index_mult_dep',
+    'layout': {
+      'visibility': 'none',
+    },
+    'type': 'fill',
+    'paint': {
+        'fill-color':{
+        property: 'Total population: mid 2015 (excluding prisoners)_rank',
+        stops: colorDictList2Array(growthColorStops),
+        }, 'fill-opacity':0.7
+    }
+
+  //inserted before the food outlets layer
+} ,'Food_outlets' );
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // The isochrone layer
 
@@ -564,7 +584,7 @@ map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Sets up the buttons that allow the layers to be selected
 
-    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure", "10 minute walking time"]
+    buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding','Education post 16' ,'Food access', "Obesity measure", "10 minute walking time","Population level"]
 
     function resetNavMenu() {
         buttonNames.forEach(function(x) {
@@ -644,6 +664,15 @@ map.getSource('iso').setData({'type': 'FeatureCollection','features':map_results
     });
  
 
+ document.getElementById('toggle-nuts7').addEventListener('click', function() {
+        toggleLayer('Population_layer');
+        buttonNames.forEach(function(x) {
+        document.getElementById(x).className = "";
+      });
+        resetNavMenu();
+        this.className = 'active';
+    });
+ 
 
    
 
