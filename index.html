@@ -206,6 +206,30 @@ map.addLayer({
 
 });
 
+        //Adds the source for a Liverpool border
+        map.addSource('Liverpool_bord', {
+          type: 'geojson',
+          data: 'Liverpool_boundary.geojson'
+        });
+
+        //Adds the data as a layer called 'Liverpool_border_layer'
+        map.addLayer({
+          'id': 'Liverpool_border_layer',
+          'source': 'Liverpool_bord',
+          'type': 'line',
+          'layout': {
+            'visibility': 'visible',
+            'line-join': 'round',
+            'line-cap': 'round'
+          },
+          'paint': {
+            'line-color':"#a9a9a9",
+            'line-width': 2 //The original value was 1
+          }
+
+        }, 'Food_banks');
+
+
 
 // Adds in the Food standards agency food outlet data 
 map.addSource('Food_outlets', {
@@ -442,6 +466,8 @@ map.addSource('iso', {
           },
           'Food_outlets'
         );
+
+
 // set up arrays to hold the coordinates
 var arr=[];
 var arr_bank=[];
