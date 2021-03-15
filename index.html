@@ -27,33 +27,44 @@
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog">
-        <div class="modal-dialog">
+      <!--  <div class="modal-dialog" style="width:1250px;"> -->
+            <div class="modal-dialog" style="max-width: 40%;" role="document">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <!--Defines the style of the header-->
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <!-- The title of the modal popup -->
+                        <h4 class="modal-title">Further information</h4>
+                    </div>
+                    <!-- modal-body contains the content for the pop up -->
+                    <div class="modal-body">
+                        <p>
+                            This map is work in progress. It is being created at <a href="http://www.nesta.org.uk/">Nesta</a> by <a href="https://twitter.com/johnardavies">John Davies</a>
+                        </p>
+                        <h4><u>The map's data sources:</u></h4>
+                        <h5>The general food outlet information</h5>
+                        <p>This is obtained by geocoding the list of Liverpool food outlets on the <a href="https://ratings.food.gov.uk/default/en-GB">Food Standards Agency website</a></p>
+                        <h5>The affordable food initatives (Food pantries, Free food initatives, Community cafes) information</h5>
+                        <p>This has been obtained from the <a href="http://www.feedingliverpool.org/resources">Feeding Liverpool map</a></p>
+                        <h5>The information on Foodbanks</h5>
+                        <p>This has been obtained from Google searches and will be updated</p>
+                        <h5>The walking distance layer</h5>
+                        <p>This is created by calling the <a href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone API </a></p>
+                        <h5>The reception class obesity layer at the ward level</h5>
+                        <p>This data has been obtained from Liverpool council</p>
+                        <h5>All other layer data</h5>
+                        <p>This is taken from the <a href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0"> index of multiple deprivation</a></p>
+                        <h5><u>Feedbank</u></h5>
+                        Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
 
-            <!-- Modal content-->
-            <div class="modal-content">
-                <!--Defines the style of the header-->
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <!-- The title of the modal popup -->
-                    <h4 class="modal-title">Further information</h4>
-                </div>
-                <!-- modal-body contains the content for the pop up -->
-                <div class="modal-body">
-                    <p>
-                        This map is work in progress. It is being created at <a href="http://www.nesta.org.uk/">Nesta</a> by <a href="https://twitter.com/johnardavies">John Davies</a>
-                    <p>
-                        The data sources the map was based on are: [To be updated]
-                    </p>
-                    <h4> Feedback</h4>
-                    Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
             </div>
-
         </div>
-    </div>
 
 
     <div id='map'></div>
