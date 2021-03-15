@@ -28,7 +28,7 @@
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog">
       <!--  <div class="modal-dialog" style="width:1250px;"> -->
-            <div class="modal-dialog" style="max-width: 40%;" role="document">
+            <div class="modal-dialog" style="max-width: 50%;" role="document">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <!--Defines the style of the header-->
@@ -53,6 +53,10 @@
                         <p>This is created by calling the <a href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone API </a></p>
                         <h5>The reception class obesity layer at the ward level</h5>
                         <p>This data has been obtained from Liverpool council</p>
+                        <h5>The e-food deserts index layer</h5>
+                        <p>This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
+                        CDRC and was obtained from their <a href="https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities">website</a></p>
+                        </p>
                         <h5>All other layer data</h5>
                         <p>This is taken from the <a href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0"> index of multiple deprivation</a></p>
                         <h5><u>Feedbank</u></h5>
@@ -81,13 +85,17 @@
     </nav>
     <div class='map-overlay top'>
         <!-- Slider commented out<div class='map-overlay-inner'>
-        <label>Filter <span id='slider-value'></span></label>
-        <input id='slider' type='range' min='0' max='60' step='1' value='0' />
-        </div> -->
+    <label>Filter <span id='slider-value'></span></label>
+    <input id='slider' type='range' min='0' max='60' step='1' value='0' />
+    </div> -->
         <div id="head" style="fill-color:red">
             <h1 style="color:#000000; width: 8em;">Food supply map</h1>
         </div>
-        <!--     <div class='map-overlay' id='legend'></div> -->
+
+        <div><a href="" data-toggle="modal" data-target="#myModal">[Read more]</a></div>
+
+
+        <!-- Some of the categories are removed as they seem less relevant to the analysis  -->
         <div id="legend" class="legend" style="display: block">
             <h4>Food supply outlets</h4>
             <div><span style="background-color: red"></span>Food banks</div>
@@ -95,23 +103,19 @@
             <div><span style="background-color:  blue"></span>Free food initatives</div>
             <div><span style="background-color: #008000"></span>Community cafes</div>
             <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
-            <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-            <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
-            <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
-            <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
+            <!-- <div><span style="background-color: #80b1d3"></span>Mobile caterers</div> -->
+            <!-- <div><span style="background-color:  #fdb462"></span>Manufactures packers</div> -->
             <div><span style="background-color:#ccebc5"></span>Other retailers</div>
             <div><span style="background-color: #bebada"></span>Takeaway and sandwich shops</div>
             <div><span style="background-color: #fb8072"></span>Pub/bar/nightclub </div>
-            <div><span style="background-color: #80b1d3"></span>Hospitals/Childcare/Caring Premises</div>
-            <div><span style="background-color: #fdb462"></span>Schools/colleges/university</div>
+            <!-- <div><span style="background-color: #80b1d3"></span>Hospitals/Childcare/Caring Premises</div> -->
+            <!-- <div><span style="background-color: #fdb462"></span>Schools/colleges/university</div> -->
             <div><span style="background-color: #fb8072"></span>Supermarkets/Hypermarkets</div>
-            <div><span style="background-color: #b3de69"></span>Other catering premises</div>
-            <div><span style="background-color: #ccc"></span>Hotel/bed & breakfast/guest house</div>
-            <div><span style="background-color: #80b1d3"></span>Mobile caterers</div>
-            <div><span style="background-color: #fdb462"></span>Distributors transporters</div>
-            <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-            <div><a href="" data-toggle="modal" data-target="#myModal">[Read more]</a></div> 
-         <!--   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
+            <!-- <div><span style="background-color: #b3de69"></span>Other catering premises</div> -->
+            <!-- <div><span style="background-color: #ccc"></span>Hotel/bed & breakfast/guest house</div> -->
+            <!-- <div><span style="background-color: #fdb462"></span>Distributors transporters</div> -->
+       
+            <!--   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
         </div>
         <div id="scale-legend" class="scale-legend" style="display: block">
             <h4>Scale</h4>
@@ -170,11 +174,11 @@
             }
 
 
-            var scale = 1;
+
             var bounds = [
 
-                [-3.066758 * scale, 53.2859873 * scale], // Southwest coordinates
-                [-2.768642 * scale, 53.5207127 * scale]  // Northeast coordinates
+                [-3.066758, 53.2859873], // Southwest coordinates
+                [-2.768642, 53.5207127]  // Northeast coordinates
             ];
             var zoomThreshold = 4;
 
@@ -190,7 +194,7 @@
 
                 center: [-2.92413, 53.40938],
                 minZoom: 0.1,
-                zoom: 10,  // The bigger the zoom number the closer in you go zoom was 8
+                zoom: 2,  // The bigger the zoom number the closer in you go was 10
                 pitch: 40, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds,
@@ -291,31 +295,41 @@
                     'layout': {
                         //'icon-image': 'custom-marker'
                     },
+                    'filter': ["any" , 
+
+                    ['==', 'BusinessType', 'Retailers - other'],
+                    ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
+                    ['==', 'BusinessType', 'Takeaway/sandwich shop'], 
+                    ['==', 'BusinessType', 'Pub/bar/nightclub'],
+                    ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
+
+                        ] ,
                     'paint': {
                         'circle-radius': {
                             'base': 3,
                             'stops': [[12, 3], [22, 140]]
                         },
-                        // 'circle-color': "#d95f0e", // Was '#A52A2A'
+                        
                         'circle-color': {
                             property: 'BusinessType',
                             type: 'categorical',
                             stops: [
-
+                                // Note some of the below are filtered out at above
                                 ['Restaurant/Cafe/Canteen', '#8dd3c7'],
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
                                 ['Pub/bar/nightclub', '#fb8072'],
-                                ['Hospitals/Childcare/Caring Premises', '#80b1d3'],
-                                ['School/college/university', '#fdb462'],
-                                ['Other catering premises', '#b3de69'],
-                                ['Hotel/bed & breakfast/guest house', '#ccc'],
-                                ['Retailers - supermarkets/hypermarkets', '#fb8072'],
-                                ['Mobile caterer', '#80b1d3'],
-                                ['Distributors/Transporters', '#fdb462'],
-                                ['Manufacturers/packers', '#fdb462']
+                         //      ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
+                         //       ['School/college/university', '#fdb462'],
+                         //       ['Other catering premises',   '#b3de69'],
+                         //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
+                                ['Retailers - supermarkets/hypermarkets' , '#fb8072'],
+                         //       ['Mobile caterer',    '#80b1d3'],
+                         //        ['Distributors/Transporters', '#fdb462'],
+                         //       ['Manufacturers/packers' , '#fdb462']
                             ]
                         }
+                        
 
 
                     }
@@ -469,7 +483,7 @@
                 }, 'Food_outlets');
 
 
-                //Adds in the Morbidity data as a layer called 'Morbidity'
+                //Adds in the Morbidity data as a layer called 'Education'
                 map.addLayer({
                     'id': 'Education',
                     'source': 'Index_mult_dep',
@@ -489,7 +503,7 @@
 
 
 
-                //Adds the food access
+                //Adds the population data as the 'Population_layer'
                 map.addLayer({
                     'id': 'Population_layer',
                     'source': 'Index_mult_dep',
