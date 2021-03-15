@@ -28,7 +28,7 @@
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog">
       <!--  <div class="modal-dialog" style="width:1250px;"> -->
-            <div class="modal-dialog" style="max-width: 40%;" role="document">
+            <div class="modal-dialog" style="max-width: 50%;" role="document">
                 <!-- Modal content-->
                 <div class="modal-content">
                     <!--Defines the style of the header-->
@@ -53,6 +53,10 @@
                         <p>This is created by calling the <a href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone API </a></p>
                         <h5>The reception class obesity layer at the ward level</h5>
                         <p>This data has been obtained from Liverpool council</p>
+                        <h5>The e-food deserts index layer</h5>
+                        <p>This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
+                        CDRC and was obtained from their <a href="https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities">website</a></p>
+                        </p>
                         <h5>All other layer data</h5>
                         <p>This is taken from the <a href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0"> index of multiple deprivation</a></p>
                         <h5><u>Feedbank</u></h5>
@@ -170,11 +174,11 @@
             }
 
 
-            var scale = 1;
+            
             var bounds = [
 
-                [-3.066758 * scale, 53.2859873 * scale], // Southwest coordinates
-                [-2.768642 * scale, 53.5207127 * scale]  // Northeast coordinates
+                [-3.066758 , 53.2859873 ], // Southwest coordinates
+                [-2.768642 , 53.5207127 ]  // Northeast coordinates
             ];
             var zoomThreshold = 4;
 
@@ -190,7 +194,7 @@
 
                 center: [-2.92413, 53.40938],
                 minZoom: 0.1,
-                zoom: 10,  // The bigger the zoom number the closer in you go zoom was 8
+                zoom: 2,  // The bigger the zoom number the closer in you go was 10
                 pitch: 40, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds,
