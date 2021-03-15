@@ -92,7 +92,7 @@
             <h1 style="color:#000000; width: 8em;">Food supply map</h1>
         </div>
 
-        other catering premises.
+        <div><a href="" data-toggle="modal" data-target="#myModal">[Read more]</a></div>
 
 
         <!-- Some of the categories are removed as they seem less relevant to the analysis  -->
@@ -104,7 +104,6 @@
             <div><span style="background-color: #008000"></span>Community cafes</div>
             <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
             <!-- <div><span style="background-color: #80b1d3"></span>Mobile caterers</div> -->
-            <div><span style="background-color: #fdb462"></span>Distributors transporters</div> 
             <!-- <div><span style="background-color:  #fdb462"></span>Manufactures packers</div> -->
             <div><span style="background-color:#ccebc5"></span>Other retailers</div>
             <div><span style="background-color: #bebada"></span>Takeaway and sandwich shops</div>
@@ -115,8 +114,7 @@
             <!-- <div><span style="background-color: #b3de69"></span>Other catering premises</div> -->
             <!-- <div><span style="background-color: #ccc"></span>Hotel/bed & breakfast/guest house</div> -->
             <!-- <div><span style="background-color: #fdb462"></span>Distributors transporters</div> -->
-            <div><span style="background-color:  #fdb462"></span>Manufactures packers</div>
-            <div><a href="" data-toggle="modal" data-target="#myModal">[Read more]</a></div>
+       
             <!--   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
         </div>
         <div id="scale-legend" class="scale-legend" style="display: block">
@@ -297,31 +295,41 @@
                     'layout': {
                         //'icon-image': 'custom-marker'
                     },
+                    'filter': ["any" , 
+
+                    ['==', 'BusinessType', 'Retailers - other'],
+                    ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
+                    ['==', 'BusinessType', 'Takeaway/sandwich shop'], 
+                    ['==', 'BusinessType', 'Pub/bar/nightclub'],
+                    ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
+
+                        ] ,
                     'paint': {
                         'circle-radius': {
                             'base': 3,
                             'stops': [[12, 3], [22, 140]]
                         },
-                        // 'circle-color': "#d95f0e", // Was '#A52A2A'
+                        
                         'circle-color': {
                             property: 'BusinessType',
                             type: 'categorical',
                             stops: [
-
+                                // Note some of the below are filtered out at above
                                 ['Restaurant/Cafe/Canteen', '#8dd3c7'],
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
                                 ['Pub/bar/nightclub', '#fb8072'],
-                             //   ['Hospitals/Childcare/Caring Premises', '#80b1d3'],
-                             //  ['School/college/university', '#fdb462'],
-                             //  ['Other catering premises', '#b3de69'],
-                             //  ['Hotel/bed & breakfast/guest house', '#ccc'],
-                                ['Retailers - supermarkets/hypermarkets', '#fb8072'],
-                              // ['Mobile caterer', '#80b1d3'],
-                              //  ['Distributors/Transporters', '#fdb462'],
-                              //  ['Manufacturers/packers', '#fdb462']
+                         //      ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
+                         //       ['School/college/university', '#fdb462'],
+                         //       ['Other catering premises',   '#b3de69'],
+                         //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
+                                ['Retailers - supermarkets/hypermarkets' , '#fb8072'],
+                         //       ['Mobile caterer',    '#80b1d3'],
+                         //        ['Distributors/Transporters', '#fdb462'],
+                         //       ['Manufacturers/packers' , '#fdb462']
                             ]
                         }
+                        
 
 
                     }
@@ -475,7 +483,7 @@
                 }, 'Food_outlets');
 
 
-                //Adds in the Morbidity data as a layer called 'Morbidity'
+                //Adds in the Morbidity data as a layer called 'Education'
                 map.addLayer({
                     'id': 'Education',
                     'source': 'Index_mult_dep',
@@ -495,7 +503,7 @@
 
 
 
-                //Adds the food access
+                //Adds the population data as the 'Population_layer'
                 map.addLayer({
                     'id': 'Population_layer',
                     'source': 'Index_mult_dep',
