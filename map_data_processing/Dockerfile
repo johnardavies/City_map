@@ -13,6 +13,7 @@ RUN pip install plotnine
 RUN pip install keplergl
 RUN pip install geopy
 RUN pip install geojson
+RUN pip install geojson-rewind
 # Create a directory in the container notebooks
 
 RUN mkdir notebooks
