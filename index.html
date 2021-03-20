@@ -173,13 +173,14 @@
                 return query
             }
 
-
-
+          
+          
             var bounds = [
 
-                [-3.066758, 53.2859873], // Southwest coordinates
-                [-2.768642, 53.5207127]  // Northeast coordinates
+                [-3.0542, 53.295875], // Southwest coordinates
+                [-2.7812, 53.510825 ]  // Northeast coordinates
             ];
+
             var zoomThreshold = 4;
 
 
@@ -194,7 +195,7 @@
 
                 center: [-2.92413, 53.40938],
                 minZoom: 0.1,
-                zoom: 2,  // The bigger the zoom number the closer in you go was 10
+                zoom: 10,  // The bigger the zoom number the closer in you go was 10
                 pitch: 40, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds,
@@ -388,7 +389,7 @@
 
 
 
-                //Adds the income data
+                //Adds the obesity data at ward level
                 map.addLayer({
                     'id': 'Obesity',
                     'source': 'Ward_level_data',
@@ -407,119 +408,47 @@
                 }, 'Food_outlets');
 
 
-                //Adds the food access
-                map.addLayer({
-                    'id': 'FoodAccess',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Score_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
+                // Add in the index of multiple deprivation layers
+                // Function to add the multiple index of muliple deprivation layer
 
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
+                function add_mult_dep(x, y) {
 
+                    var new_layer = map.addLayer({
+                        'id': x,
+                        'source': 'Index_mult_dep',
+                        'layout': {
+                            'visibility': 'none',
+                        },
+                        'type': 'fill',
+                        'paint': {
+                            'fill-color': {
+                                property: y,
+                                stops: colorDictList2Array(growthColorStops),
+                            }, 'fill-opacity': 0.7
+                        }
 
+                        //inserted before the food outlets layer
+                    }, 'Food_outlets');
+                    return new_layer;
 
-                //Adds the income data
-                map.addLayer({
-                    'id': 'Income_layer',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Income Domain numerator_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
+                }
 
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
+                // Json for the index of multiple deprivation layers the map shows
 
-                //Adds the data as a layer called 'Index_mult_dep'
-                map.addLayer({
-                    'id': 'Overcrowding',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Household overcrowding indicator_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
+                var mult_ind_dep = [{ 'var_id': 'FoodAccess', 'data_to_plot': 'Score_rank' }
+                    , { 'var_id': 'Income_layer', 'data_to_plot': 'Income Domain numerator_rank' }
+                    , { 'var_id': 'Overcrowding', 'data_to_plot': 'Household overcrowding indicator_rank' }
+                    , { 'var_id': 'Morbidity', 'data_to_plot': 'Acute morbidity indicator_rank' }
+                    , { 'var_id': 'Education', 'data_to_plot': 'Staying on in education post 16 indicator_rank' }
+                    , { 'var_id': 'Population_layer', 'data_to_plot': 'Total population: mid 2015 (excluding prisoners)_rank' }
+                ]
+                // Loop through and plot on the map
+                for (var i = 0; i < mult_ind_dep.length; i++) {
 
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
+                    var obj = mult_ind_dep[i];
+                    add_mult_dep(obj.var_id, obj.data_to_plot);
 
-
-                //Adds in the Morbidity data as a layer called 'Morbidity'
-                map.addLayer({
-                    'id': 'Morbidity',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Acute morbidity indicator_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
-
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
-
-
-                //Adds in the Morbidity data as a layer called 'Education'
-                map.addLayer({
-                    'id': 'Education',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Staying on in education post 16 indicator_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
-
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
-
-
-
-                //Adds the population data as the 'Population_layer'
-                map.addLayer({
-                    'id': 'Population_layer',
-                    'source': 'Index_mult_dep',
-                    'layout': {
-                        'visibility': 'none',
-                    },
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            property: 'Total population: mid 2015 (excluding prisoners)_rank',
-                            stops: colorDictList2Array(growthColorStops),
-                        }, 'fill-opacity': 0.7
-                    }
-
-                    //inserted before the food outlets layer
-                }, 'Food_outlets');
+                }
 
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The isochrone layer
@@ -548,6 +477,7 @@
 
 
                 // set up arrays to hold the coordinates
+
                 var arr = [];
                 var arr_bank = [];
 
@@ -574,6 +504,7 @@
 
 
                                 // parse the foodbank coordinates into an arrary arr_bank
+
                                 for (var i = 0; i < data2.features.length; i++) {
                                     var coordinates_foodbank = data2.features[i].geometry.coordinates;
                                     arr_bank.push(coordinates_foodbank)
@@ -581,16 +512,19 @@
 
 
                                 // stick the coordinates of the food banks and the affordable food initatives together
+
                                 var coord_call = arr_bank.concat(arr);
 
                                 //Convert the coordinates into API call format
                                 var map_ar = coord_call.map(make_api);
 
                                 // sets up variables
+
                                 var result, results = [], deferred, deferreds = [], map_results = [];
 
 
                                 // 1. Make multiple AJAX calls to a Server
+
                                 for (i = 0; i < map_ar.length; ++i) {
 
                                     deferred = $.ajax(map_ar[i], {
@@ -613,6 +547,7 @@
                                     }
 
                                     //apply map_results to the map
+
                                     map.getSource('iso').setData({ 'type': 'FeatureCollection', 'features': map_results })
 
                                     map.addLayer(
@@ -634,11 +569,10 @@
                                 })
 
 
-                                // close the load foodank geojson
+                                // close the load foodbank geojson
                             });
-                        // close the affordable food iniatives geojson
+                        // close the affordable food initatives geojson
                     });
-
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Sets up the buttons that allow the layers to be selected
