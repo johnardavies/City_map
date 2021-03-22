@@ -62,7 +62,7 @@
                         <h5>All other layer data</h5>
                         <p>This is taken from the <a href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0"> index of multiple deprivation</a></p>
                         <h4><u>The map's code:</u></h4>
-                        <p>The map's code is available on GitHub<a href="https://github.com/johnardavies/City_map">here</a></p>
+                        <p>The map's code is available on GitHub <a href="https://github.com/johnardavies/City_map">here</a></p>
                         <h4><u>Feedbank</u></h4>
                         Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
                     </div>
@@ -217,7 +217,7 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity', 'Education', 'FoodAccess', 'Obesity', 'Overcrowding', 'isolayer']
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer']
                 for (var i = 0; i < layer_list.length; i++) {
 
                     if (layer_list[i] == layerName && currentState == 'none') {
@@ -235,31 +235,17 @@
                 }
             }
 
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // when the map loads to the following
+            
+ /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ // Loading the map
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             map.on('load', function () {
 
 
-                // Adds in the foodbank data
-                map.addSource('Food_banks', {
-                    type: 'geojson',
-                    data: 'Foodbanks.geojson'
-                });
-
-                map.addLayer({
-                    'id': 'Food_banks',
-                    'type': 'circle',
-                    'source': 'Food_banks',
-                    'layout': {
-                        //'icon-image': 'custom-marker'
-                    },
-                    'paint': {
-                        'circle-color': 'red'
-                    }
-
-
-                });
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The Liverpool boundary information
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //Adds the source for a Liverpool border
                 map.addSource('Liverpool_bord', {
@@ -286,13 +272,41 @@
 
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The food outlet information  For general food outlets, food banks and the affordable food initatives
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                // Adds in the foodbank data
+                map.addSource('Food_banks', {
+                    type: 'geojson',
+                    data: 'Foodbanks.geojson'
+                });
+
+                // Adds the foodbank data to the map
+
+                map.addLayer({
+                    'id': 'Food_banks',
+                    'type': 'circle',
+                    'source': 'Food_banks',
+                    'layout': {
+                        //'icon-image': 'custom-marker'
+                    },
+                    'paint': {
+                        'circle-color': 'red'
+                    }
+
+
+                });
+
                 // Adds in the Food standards agency food outlet data
                 map.addSource('Food_outlets', {
                     type: 'geojson',
                     data: 'Food_outlets_geo.geojson'
                 });
 
-
+                // Adds the data to the map
                 map.addLayer({
                     'id': 'Food_outlets',
                     'type': 'circle',
@@ -301,7 +315,7 @@
                         //'icon-image': 'custom-marker'
                     },
                     'filter': ["any" , 
-
+                // Filter to keep the outlets most relevant for the analysis i.e. those that are consumer related rather than b2b or institutional
                     ['==', 'BusinessType', 'Retailers - other'],
                     ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
                     ['==', 'BusinessType', 'Takeaway/sandwich shop'], 
@@ -324,14 +338,14 @@
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
                                 ['Pub/bar/nightclub', '#fb8072'],
-                         //      ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
+                                ['Retailers - supermarkets/hypermarkets' , '#fb8072']
+                         //       ['Mobile caterer',    '#80b1d3'],
+                         //       ['Distributors/Transporters', '#fdb462'],
+                         //       ['Manufacturers/packers' , '#fdb462']
+                         //       ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
                          //       ['School/college/university', '#fdb462'],
                          //       ['Other catering premises',   '#b3de69'],
                          //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
-                                ['Retailers - supermarkets/hypermarkets' , '#fb8072'],
-                         //       ['Mobile caterer',    '#80b1d3'],
-                         //        ['Distributors/Transporters', '#fdb462'],
-                         //       ['Manufacturers/packers' , '#fdb462']
                             ]
                         }
                         
@@ -343,26 +357,20 @@
 
 
 
-                // Adds in the Food standards agency food outlet data
+                // Adds in the data on the location of food affordability initatives
                 map.addSource('Food_affordability', {
                     type: 'geojson',
                     data: 'Affordable_food_iniatives.geojson'
                 });
 
-
+                // Adds this data to the map 
                 map.addLayer({
                     'id': 'Food_affordability_layer',
                     'type': 'circle',
                     'source': 'Food_affordability',
                     'layout': {
-                        //'icon-image': 'custom-marker'
                     },
                     'paint': {
-                        //            'circle-radius': {
-                        //            'base': 3 ,
-                        //            'stops': [[12, 3], [22, 140]]
-                        //         },
-                        // 'circle-color': "#d95f0e", // Was '#A52A2A'
                         'circle-color': {
                             property: 'Category',
                             type: 'categorical',
@@ -377,15 +385,10 @@
                     }
                 }, 'Food_banks');
 
-
-                // Add in the index of multiple deprivation data
-                map.addSource('Index_mult_dep', {
-                    type: 'geojson',
-                    data: 'Liverpool_lsoa.geojson'
-                });
-
-
-                // Add in the index of multiple deprivation data
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The ward level data
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Add in the ward level data
                 map.addSource('Ward_level_data', {
                     type: 'geojson',
                     data: 'Liverpool_wards.geojson'
@@ -393,9 +396,9 @@
 
 
 
-                //Adds the obesity data at ward level
+                //Adds the obesity data at ward level to the map
                 map.addLayer({
-                    'id': 'Obesity',
+                    'id': 'Obesity_layer',
                     'source': 'Ward_level_data',
                     'layout': {
                         'visibility': 'none',
@@ -411,8 +414,19 @@
                     //inserted before the food outlets layer
                 }, 'Food_outlets');
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The index of multiple deprivation data and e-food-deset index at lower super output area (lsoa)
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                // Add in the index of multiple deprivation layers
+                // Add in the lower super output areas
+                map.addSource('Index_mult_dep', {
+                    type: 'geojson',
+                    data: 'Liverpool_lsoa.geojson'
+                });
+
+
+                // Add the data for the different layers to the map
+
                 // Function to add the multiple index of muliple deprivation layer
 
                 function add_mult_dep(x, y) {
@@ -437,13 +451,13 @@
 
                 }
 
-                // Json for the index of multiple deprivation layers the map shows
+                // Json for the lsoa layers data that the map shows
 
-                var mult_ind_dep = [{ 'var_id': 'FoodAccess', 'data_to_plot': 'Score_rank' }
+                var mult_ind_dep = [{ 'var_id': 'Foodaccess_layer', 'data_to_plot': 'Score_rank' }
                     , { 'var_id': 'Income_layer', 'data_to_plot': 'Income Domain numerator_rank' }
-                    , { 'var_id': 'Overcrowding', 'data_to_plot': 'Household overcrowding indicator_rank' }
-                    , { 'var_id': 'Morbidity', 'data_to_plot': 'Acute morbidity indicator_rank' }
-                    , { 'var_id': 'Education', 'data_to_plot': 'Staying on in education post 16 indicator_rank' }
+                    , { 'var_id': 'Overcrowding_layer', 'data_to_plot': 'Household overcrowding indicator_rank' }
+                    , { 'var_id': 'Morbidity_layer', 'data_to_plot': 'Acute morbidity indicator_rank' }
+                    , { 'var_id': 'Education_layer', 'data_to_plot': 'Staying on in education post 16 indicator_rank' }
                     , { 'var_id': 'Population_layer', 'data_to_plot': 'Total population: mid 2015 (excluding prisoners)_rank' }
                 ]
                 // Loop through and plot on the map
@@ -454,8 +468,9 @@
 
                 }
 
-                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // The isochrone layer
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// The isochrone layer created by calling the mapbox API
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 map.addSource('iso', {
                     type: 'geojson',
@@ -514,7 +529,7 @@
                                 var result, results = [], deferred, deferreds = [], map_results = [];
 
 
-                                // 1. Make multiple AJAX calls to a Server
+                                // 1. Make multiple AJAX calls to the mapbox isochrone api
 
                                 for (i = 0; i < map_ar.length; ++i) {
 
@@ -543,7 +558,7 @@
 
                                     map.addLayer(
                                         {
-                                            'id': 'isolayer',
+                                            'id': 'Iso_layer',
                                             'type': 'fill',
                                             'source': 'iso',
                                             'layout': { 'visibility': 'none' },
@@ -563,18 +578,13 @@
                                 // close the load foodbank geojson
                             });
                         // close the affordable food initatives geojson
-                    });
+                    })
 
-                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // Sets up the buttons that allow the layers to be selected
-
-                buttonNames = ['Income levels', 'Morbidity', 'Household overcrowding', 'Education post 16', 'Food access', "Obesity measure", "10 minute walking time", "Population level"]
-
-                function resetNavMenu() {
-                    buttonNames.forEach(function (x) {
-                        document.getElementById(x).className = "";
-                    });
-                }
+ //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ // Sets up the buttons that allow the layers to be selected
+ //////////////////////////////////////////////////////////////////////////////////
+  
+           
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Linking the buttons to the layers
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -594,17 +604,17 @@
 
                 }
 
-// Layers mapping layers to buttons
+// json mapping layers to buttons
 
                 var buttons_to_layers = [
                     { 'button_id': 'toggle-0', 'layer_to_link': 'Population_layer'}
                   , {'button_id': 'toggle-1', 'layer_to_link': 'Income_layer'}
-                  , { 'button_id': 'toggle-2', 'layer_to_link': 'Morbidity' }
-                  , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding'}
-                  , { 'button_id': 'toggle-4', 'layer_to_link': 'Education' }
-                  , { 'button_id': 'toggle-5', 'layer_to_link': 'FoodAccess' }
-                  , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity'}
-                  , { 'button_id': 'toggle-7', 'layer_to_link': 'isolayer' }
+                  , { 'button_id': 'toggle-2', 'layer_to_link': 'Morbidity_layer' }
+                  , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding_layer'}
+                  , { 'button_id': 'toggle-4', 'layer_to_link': 'Education_layer' }
+                  , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
+                  , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer'}
+                  , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
 
                     ]
 
@@ -619,14 +629,13 @@
                    }
 
                
-                // /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // Code for popups that appear //////////////////////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Code for popups that appear //////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                /////////////////////////////////////////////////////////////
-                // Add a pop up that shows info on food outlets when selected
-                /////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+// Add a pop up that shows info on food outlets when selected
+/////////////////////////////////////////////////////////////
 
                 map.on('click', 'Food_outlets', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
@@ -648,9 +657,9 @@
                         .addTo(map);
                 });
 
-                ///////////////////////////////////////////////////////////////
-                // Add a popup for the food banks
-                //////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+// Add a popup for the food banks
+//////////////////////////////////////////////////////////////
 
                 map.on('click', 'Food_banks', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
@@ -671,9 +680,9 @@
                         .addTo(map);
                 });
 
-                /////////////////////////////////////////////////////////
-                // Add popups to accessible food outlets
-                ///////////////////////////////////////////////////////
+ /////////////////////////////////////////////////////////
+ // Add popups to accessible food outlets
+ ///////////////////////////////////////////////////////
 
                 map.on('click', 'Food_affordability_layer', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
