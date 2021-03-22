@@ -11,20 +11,20 @@ https://johnardavies.github.io/City_map/#
 This is obtained by geocoding the list of Liverpool food outlets on the [Food Standards Agency website](https://ratings.food.gov.uk/default/en-GB)
 
 ***The affordable food initatives (Food pantries, Free food initatives, Community cafes) information***
-This has been obtained from the [Feeding Liverpool map] (http://www.feedingliverpool.org/resources)
+This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)
 
 ***The information on Foodbanks***
 This has been obtained from Google searches and will be updated
 
 ***The walking distance layer***
-This is created by calling the [MapboxGL isochrone API] (https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/)
+This is created by calling the [MapboxGL isochrone API](https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/)
 
 ***The reception class obesity layer at the ward level***
 This data has been obtained from Liverpool council
 
 ***The e-food deserts index layer***
 This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
- CDRC and was obtained from their [website] (https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities)
+ CDRC and was obtained from their [website](https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities)
 
 ***All other layer data***
 This is taken from the [index of multiple deprivation](https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0)
@@ -46,7 +46,7 @@ $ docker run -p 8009:8009 --init map_processing
 To download the processed files for the map
 ```
 $ docker cp container_id:/notebooks/Data/Out Destination_location
-
+```
 
 **Viewing the map locally**
 
