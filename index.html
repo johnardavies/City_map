@@ -254,14 +254,28 @@
                 }
             }
 
+            function addGeoLayer(normalised) {
+
+                map.addLayer({
+                    'id': 'Obesity_layer',
+                    'source': 'Ward_level_data',
+                    'type': 'fill',
+                    'paint': {
+                        'fill-color': {
+                            'stops': '#2166ac',
+                            'fill-opacity': 0.7
+                        }
+                    }
+                }, 'Food_banks');
+
+            };
+
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Loading the map
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             map.on('load', function () {
-
-
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The food outlet information  For general food outlets, food banks and the affordable food initatives
@@ -444,6 +458,13 @@
                     data: 'Liverpool_lsoa.geojson'
                 });
 
+                /*
+                  // Add in the accessible travle areas data 
+                  map.addSource('Accessible_travel', {
+                      type: 'json',
+                      data: 'result.json'
+                  });
+                */
 
                 // Add the data for the different layers to the map
 
@@ -736,23 +757,25 @@
                     normalised = !normalised;
 
                     //  The ! reverses the value
-                    var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer']
-                    for (var i = 0; i < layer_list.length; i++) {
+                    /*
+                           for (var j = 0; j < layer_list.length; j++) {
+       
+                               var currentState2 = map.getLayoutProperty(layer_list[j], 'visibility');
+                               console.log(currentState2)
+                               if (currentState2 == undefined) {
+                                   map.setLayoutProperty(layer_list[j], 'visibility', 'none');
+                               }
+       
+                               else if (currentState2 == 'undefined') {
+                                   map.setLayoutProperty(layer_list[j], 'visibility', 'none');
+                               }
+                           }
+        
+                     */      // map.removeLayer('engmusreg');
 
-                        var currentState = map.getLayoutProperty(layer_list[i], 'visibility');
-                        console.log(currentState)
-                        if (currentState == 'none') {
-                            map.setLayoutProperty(layer_list[i], 'visibility', 'none');
-                        }
+                    addGeoLayer(normalised);
 
-                        else if (currentState == 'undefined') {
-                            map.setLayoutProperty(layer_list[i], 'visibility', 'none');
-                        }
-                    }
-
-                    // map.removeLayer('engmusreg');
-
-                    // Call the function addGeoLayer(normalised);
+                    // Call the function 
                 });
 
 
