@@ -1,5 +1,6 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset='utf-8' />
     <title></title>
@@ -8,8 +9,7 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
     <link href='./style.css' rel='stylesheet' />
     <!-- Mapbox Assembly -->
-    <link href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css"
-          rel="stylesheet" />
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.23.2/assembly.min.css" rel="stylesheet" />
     <!--Bootstrap for the modal pop up-->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,57 +22,70 @@
     <!-- d3 -->
     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 </head>
+
 <body>
 
 
     <!-- Modal -->
     <div class="modal fade" id="myModal" role="dialog">
-      <!--  <div class="modal-dialog" style="width:1250px;"> -->
-            <div class="modal-dialog" style="max-width: 50%;" role="document">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <!--Defines the style of the header-->
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <!-- The title of the modal popup -->
-                        <h4 class="modal-title">Further information</h4>
-                    </div>
-                    <!-- modal-body contains the content for the pop up -->
-                    <div class="modal-body">
-                        <p>
-                            This map is work in progress. It is being created at <a href="http://www.nesta.org.uk/">Nesta</a> by <a href="https://twitter.com/johnardavies">John Davies</a>
-                        </p>
-                        <h4><u>The map's data sources:</u></h4>
-                        <h5>The general food outlet information</h5>
-                        <p>This is obtained by geocoding the list of Liverpool food outlets on the <a href="https://ratings.food.gov.uk/default/en-GB">Food Standards Agency website</a></p>
-                        <h5>The affordable food initatives (Food pantries, Free food initatives, Community cafes) information</h5>
-                        <p>This has been obtained from the <a href="http://www.feedingliverpool.org/resources">Feeding Liverpool map</a></p>
-                        <h5>The information on Foodbanks</h5>
-                        <p>This has been obtained from Google searches and will be updated</p>
-                        <h5>The walking distance layer</h5>
-                        <p>This is created by calling the <a href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone API </a></p>
-                        <h5>The reception class obesity layer at the ward level</h5>
-                        <p>This data has been obtained from Liverpool council</p>
-                        <h5>The e-food deserts index layer</h5>
-                        <p>
-                            This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
-                            CDRC and was obtained from their <a href="https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities">website</a>
-                        </p>
-                        </p>
-                        <h5>All other layer data</h5>
-                        <p>This is taken from the <a href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0"> index of multiple deprivation</a></p>
-                        <h4><u>The map's code:</u></h4>
-                        <p>The map's code is available on GitHub <a href="https://github.com/johnardavies/City_map">here</a></p>
-                        <h4><u>Feedbank</u></h4>
-                        Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+        <!--  <div class="modal-dialog" style="width:1250px;"> -->
+        <div class="modal-dialog" style="max-width: 50%;" role="document">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <!--Defines the style of the header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <!-- The title of the modal popup -->
+                    <h4 class="modal-title">Further information</h4>
                 </div>
-
+                <!-- modal-body contains the content for the pop up -->
+                <div class="modal-body">
+                    <p>
+                        This map is work in progress. It is being created at <a
+                            href="http://www.nesta.org.uk/">Nesta</a> by <a href="https://twitter.com/johnardavies">John
+                            Davies</a>
+                    </p>
+                    <h4><u>The map's data sources:</u></h4>
+                    <h5>The general food outlet information</h5>
+                    <p>This is obtained by geocoding the list of Liverpool food outlets on the <a
+                            href="https://ratings.food.gov.uk/default/en-GB">Food Standards Agency website</a></p>
+                    <h5>The affordable food initatives (Food pantries, Free food initatives, Community cafes)
+                        information</h5>
+                    <p>This has been obtained from the <a href="http://www.feedingliverpool.org/resources">Feeding
+                            Liverpool map</a></p>
+                    <h5>The information on Foodbanks</h5>
+                    <p>This has been obtained from Google searches and will be updated</p>
+                    <h5>The walking distance layer</h5>
+                    <p>This is created by calling the <a
+                            href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone
+                            API </a></p>
+                    <h5>The reception class obesity layer at the ward level</h5>
+                    <p>This data has been obtained from Liverpool council</p>
+                    <h5>The e-food deserts index layer</h5>
+                    <p>
+                        This is an index measuring the degree to which areas have characteristics associated with food
+                        deserts. The index is produced by
+                        CDRC and was obtained from their <a
+                            href="https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities">website</a>
+                    </p>
+                    </p>
+                    <h5>All other layer data</h5>
+                    <p>This is taken from the <a
+                            href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0">
+                            index of multiple deprivation</a></p>
+                    <h4><u>The map's code:</u></h4>
+                    <p>The map's code is available on GitHub <a href="https://github.com/johnardavies/City_map">here</a>
+                    </p>
+                    <h4><u>Feedbank</u></h4>
+                    Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
             </div>
+
         </div>
+    </div>
 
 
     <div id='map'></div>
@@ -86,6 +99,11 @@
         <a href="#" id="toggle-5">E-food deserts index</a>
         <a href="#" id="toggle-6">Reception class obesity measure</a>
         <a href="#" id="toggle-7">Show 10 minute walking time</a>
+        <form>
+            <label class="checkbox-inline "><input type="checkbox" id='normalisation' value='normalise'> Areas in lowest
+                quintile more than 10 minutes away </label>
+
+        </form>
     </nav>
     <div class='map-overlay top'>
         <!-- Slider commented out<div class='map-overlay-inner'>
@@ -118,7 +136,7 @@
             <!-- <div><span style="background-color: #b3de69"></span>Other catering premises</div> -->
             <!-- <div><span style="background-color: #ccc"></span>Hotel/bed & breakfast/guest house</div> -->
             <!-- <div><span style="background-color: #fdb462"></span>Distributors transporters</div> -->
-       
+
             <!--   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
         </div>
         <div id="scale-legend" class="scale-legend" style="display: block">
@@ -162,7 +180,7 @@
 
             // Function that is used to make the travel time api calls
             function make_api(coord) {
-             
+
                 var query =
                     urlBase +
                     profile +
@@ -177,16 +195,17 @@
                 return query
             }
 
-          
-          
+
+
             var bounds = [
 
                 [-3.0542, 53.295875], // Southwest coordinates
-                [-2.7812, 53.510825 ]  // Northeast coordinates
+                [-2.7812, 53.510825]  // Northeast coordinates
             ];
 
             var zoomThreshold = 4;
 
+            var normalised = false;
 
             var marker = new mapboxgl.Marker({
                 'color': '#314ccd'
@@ -235,18 +254,18 @@
                 }
             }
 
-            
- /////////////////////////////////////////////////////////////////////////////////////////////////////////////
- // Loading the map
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Loading the map
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             map.on('load', function () {
 
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// The food outlet information  For general food outlets, food banks and the affordable food initatives
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // The food outlet information  For general food outlets, food banks and the affordable food initatives
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
                 // Adds in the foodbank data
@@ -285,21 +304,21 @@
                     'layout': {
                         //'icon-image': 'custom-marker'
                     },
-                    'filter': ["any" , 
-                // Filter to keep the outlets most relevant for the analysis i.e. those that are consumer related rather than b2b or institutional
-                    ['==', 'BusinessType', 'Retailers - other'],
-                    ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
-                    ['==', 'BusinessType', 'Takeaway/sandwich shop'], 
-                    ['==', 'BusinessType', 'Pub/bar/nightclub'],
-                    ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
+                    'filter': ["any",
+                        // Filter to keep the outlets most relevant for the analysis i.e. those that are consumer related rather than b2b or institutional
+                        ['==', 'BusinessType', 'Retailers - other'],
+                        ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
+                        ['==', 'BusinessType', 'Takeaway/sandwich shop'],
+                        ['==', 'BusinessType', 'Pub/bar/nightclub'],
+                        ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
 
-                        ] ,
+                    ],
                     'paint': {
                         'circle-radius': {
                             'base': 3,
                             'stops': [[12, 3], [22, 140]]
                         },
-                        
+
                         'circle-color': {
                             property: 'BusinessType',
                             type: 'categorical',
@@ -309,17 +328,17 @@
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
                                 ['Pub/bar/nightclub', '#fb8072'],
-                                ['Retailers - supermarkets/hypermarkets' , '#fb8072']
-                         //       ['Mobile caterer',    '#80b1d3'],
-                         //       ['Distributors/Transporters', '#fdb462'],
-                         //       ['Manufacturers/packers' , '#fdb462']
-                         //       ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
-                         //       ['School/college/university', '#fdb462'],
-                         //       ['Other catering premises',   '#b3de69'],
-                         //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
+                                ['Retailers - supermarkets/hypermarkets', '#fb8072']
+                                //       ['Mobile caterer',    '#80b1d3'],
+                                //       ['Distributors/Transporters', '#fdb462'],
+                                //       ['Manufacturers/packers' , '#fdb462']
+                                //       ['Hospitals/Childcare/Caring Premises', '#80b1d3'] 
+                                //       ['School/college/university', '#fdb462'],
+                                //       ['Other catering premises',   '#b3de69'],
+                                //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
                             ]
                         }
-                        
+
 
 
                     }
@@ -357,9 +376,9 @@
                 }, 'Food_banks');
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// The Liverpool boundary information
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // The Liverpool boundary information
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //Adds the source for a Liverpool border
 
@@ -386,9 +405,9 @@
                 }, 'Food_banks');
 
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// The ward level data
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // The ward level data
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Add in the ward level data
                 map.addSource('Ward_level_data', {
                     type: 'geojson',
@@ -415,9 +434,9 @@
                     //inserted before the food outlets layer
                 }, 'Food_outlets');
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// The index of multiple deprivation data and e-food-deset index at lower super output area (lsoa)
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // The index of multiple deprivation data and e-food-deset index at lower super output area (lsoa)
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 // Add in the lower super output areas
                 map.addSource('Index_mult_dep', {
@@ -469,9 +488,9 @@
 
                 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// The isochrone layer created by calling the mapbox API
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // The isochrone layer created by calling the mapbox API
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 map.addSource('iso', {
                     type: 'geojson',
@@ -481,7 +500,7 @@
                     }
                 });
 
-              
+
 
                 // set up arrays to hold the coordinates
 
@@ -581,15 +600,15 @@
                         // close the affordable food initatives geojson
                     })
 
- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
- // Sets up the buttons that allow the layers to be selected
- //////////////////////////////////////////////////////////////////////////////////
-  
-           
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// Linking the buttons to the layers
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// Function linking the buttons to the layers
+                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Sets up the buttons that allow the layers to be selected
+                //////////////////////////////////////////////////////////////////////////////////
+
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Linking the buttons to the layers
+                /////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Function linking the buttons to the layers
 
                 function link_to_control(toggle, layer_name) {
 
@@ -605,38 +624,38 @@
 
                 }
 
-// json mapping layers to buttons
+                // json mapping layers to buttons
 
                 var buttons_to_layers = [
-                    { 'button_id': 'toggle-0', 'layer_to_link': 'Population_layer'}
-                  , {'button_id': 'toggle-1', 'layer_to_link': 'Income_layer'}
-                  , { 'button_id': 'toggle-2', 'layer_to_link': 'Morbidity_layer' }
-                  , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding_layer'}
-                  , { 'button_id': 'toggle-4', 'layer_to_link': 'Education_layer' }
-                  , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
-                  , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer'}
-                  , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
+                    { 'button_id': 'toggle-0', 'layer_to_link': 'Population_layer' }
+                    , { 'button_id': 'toggle-1', 'layer_to_link': 'Income_layer' }
+                    , { 'button_id': 'toggle-2', 'layer_to_link': 'Morbidity_layer' }
+                    , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding_layer' }
+                    , { 'button_id': 'toggle-4', 'layer_to_link': 'Education_layer' }
+                    , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
+                    , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer' }
+                    , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
 
-                    ]
+                ]
 
 
-// Loop through the buttons and link to layers
+                // Loop through the buttons and link to layers
 
-                   for (var j = 0; j < buttons_to_layers.length; j++) {
+                for (var j = 0; j < buttons_to_layers.length; j++) {
 
-                       var obj = buttons_to_layers[j];
-                       link_to_control(obj.button_id, obj.layer_to_link);
+                    var obj = buttons_to_layers[j];
+                    link_to_control(obj.button_id, obj.layer_to_link);
 
-                   }
+                }
 
-               
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Code for popups that appear //////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////
-// Add a pop up that shows info on food outlets when selected
-/////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Code for popups that appear //////////////////////////////////////////////////////////////////////////////
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                /////////////////////////////////////////////////////////////
+                // Add a pop up that shows info on food outlets when selected
+                /////////////////////////////////////////////////////////////
 
                 map.on('click', 'Food_outlets', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
@@ -658,9 +677,9 @@
                         .addTo(map);
                 });
 
-///////////////////////////////////////////////////////////////
-// Add a popup for the food banks
-//////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////
+                // Add a popup for the food banks
+                //////////////////////////////////////////////////////////////
 
                 map.on('click', 'Food_banks', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
@@ -681,9 +700,9 @@
                         .addTo(map);
                 });
 
- /////////////////////////////////////////////////////////
- // Add popups to accessible food outlets
- ///////////////////////////////////////////////////////
+                /////////////////////////////////////////////////////////
+                // Add popups to accessible food outlets
+                ///////////////////////////////////////////////////////
 
                 map.on('click', 'Food_affordability_layer', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
@@ -710,8 +729,31 @@
 
                 var food_outletLegendEl = document.getElementById('food-outlet-legend');
 
-                food_outletLegendEl.style.display = 'block';
+                //    food_outletLegendEl.style.display = 'block';
 
+                $("#normalisation").click(function () {
+
+                    normalised = !normalised;
+
+                    //  The ! reverses the value
+                    var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer']
+                    for (var i = 0; i < layer_list.length; i++) {
+
+                        var currentState = map.getLayoutProperty(layer_list[i], 'visibility');
+                        console.log(currentState)
+                        if (currentState == 'none') {
+                            map.setLayoutProperty(layer_list[i], 'visibility', 'none');
+                        }
+
+                        else if (currentState == 'undefined') {
+                            map.setLayoutProperty(layer_list[i], 'visibility', 'none');
+                        }
+                    }
+
+                    // map.removeLayer('engmusreg');
+
+                    // Call the function addGeoLayer(normalised);
+                });
 
 
 
@@ -719,4 +761,5 @@
 
             });  //Closes the map.load</script>
 </body>
+
 </html>
