@@ -238,7 +238,8 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer']
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'education_dist', 'population_dist']
+
                 for (var i = 0; i < layer_list.length; i++) {
 
                     if (layer_list[i] == layerName && currentState == 'none') {
@@ -563,7 +564,7 @@
                         },
                         'type': 'fill',
                         'paint': {
-                            'fill-color': '#2166ac',
+                            'fill-color': '#FF0000',
                             'fill-opacity': 0.7
                         }
                         //inserted before the food outlets layer
@@ -810,44 +811,39 @@
 
                 var turned_off = 'none';
 
-                //   var food_outletLegendEl = document.getElementById('food-outlet-legend');
-
-                //    food_outletLegendEl.style.display = 'block';
-
-                //  $("#normalisation").click(function () {
-
-                //  function myFunction() {
-                // Get the checkbox
-                //     var checkBox = document.getElementById("normalisation");
-                // Get the output text
-
-
-
-                /*   $("#normalisation").click(function () {
-   
-                      
-   
-                       }; */
 
                 $('#normalisation').on('change', function () {
-                    console.log($(this)[0].checked)
-                    if ($(this)[0].checked === true) {
-                        // If the checkbox is checked, display the output text
-                        normalised = true;
-                        //  addGeoLayer(normalised);
-                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer']
-                        //   addGeoLayer(normalised);
-                        //  The ! reverses the value
-                        for (var j = 0; j < layer_list2.length; j++) {
+                    // Dictionary to translate between a layer and the corresponding distance layer
+                    var Layer_translate = {
+                        'Population_layer': 'population_dist',
+                        'Income_layer': 'income_dist',
+                        'Overcrowding_layer': 'crowding_dist',
+                        'Education_layer': 'education_dist'
+                    };
 
+                    // Function that takes a standard layer and uses the Layer_translate to map to the distance layer
+                    function Layer_dist(x) {
+                        return Layer_translate[x];
+                    }
+
+                    // Applies if the checkbox is checked
+                    if ($(this)[0].checked === true) {
+                        //  The layers we will apply the distance subset to
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer']
+                        // Loops through these layers
+                        for (var j = 0; j < layer_list2.length; j++) {
+                            // Extract if the layer is visible
                             var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
 
                             if (currentState2 == 'visible') {
+                                // Turn off the visiblity of the current layer
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
+                                // Store the name of the layer whose visibility has been turned off
                                 turned_off = layer_list2[j]
-                                console.log(turned_off)
-                                map.setLayoutProperty('Accessible_travel', 'visibility', 'visible')
+                                // Select the corresponding distance layer and make it visible
+                                map.setLayoutProperty(Layer_dist(turned_off), 'visibility', 'visible')
                             }
+                            // If the layer is not visible do nothing
                             else if (currentState2 == 'none') {
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
 
@@ -855,10 +851,12 @@
                         }
 
                     }
+                    // If the layer is unchecked and a layer has been turned off turn it on again
                     else if ($(this)[0].checked === false && turned_off !== 'none') {
+                        // Turn on the original map layer
                         map.setLayoutProperty(turned_off, 'visibility', 'visible')
-                        // normalised = !normalised;
-                        ap.setLayoutProperty('Accessible_travel', 'visibility', 'none')
+                        // Turn off the distance layer        
+                        map.setLayoutProperty(Layer_dist(turned_off), 'visibility', 'none')
                     }
 
 
