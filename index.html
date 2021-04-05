@@ -100,7 +100,9 @@
         <a href="#" id="toggle-6">Reception class obesity measure</a>
         <a href="#" id="toggle-7">Show 10 minute walking time</a>
         <form>
-            <label class="checkbox-inline "><input type="checkbox" id='normalisation' value='normalise'> Areas in lowest
+            <!--value='normalise'-->
+            <label class="checkbox-inline "><input type="checkbox" id='normalisation' , value='normalise'> Areas in
+                lowest
                 quintile more than 10 minutes away </label>
 
         </form>
@@ -221,7 +223,7 @@
                 zoom: 10,  // The bigger the zoom number the closer in you go was 10
                 pitch: 40, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
-                maxBounds: bounds,
+                maxBounds: bounds
             });
 
             // Represent numbers as string (i.e., with thousands separators)
@@ -240,7 +242,7 @@
                 for (var i = 0; i < layer_list.length; i++) {
 
                     if (layer_list[i] == layerName && currentState == 'none') {
-                        map.setLayoutProperty(layerName, 'visibility', undefined);
+                        map.setLayoutProperty(layerName, 'visibility', 'visible');
                     }
 
                     else if (layer_list[i] != layerName && currentState == 'none') {
@@ -253,23 +255,31 @@
                     }
                 }
             }
-
-            function addGeoLayer(normalised) {
-
-                map.addLayer({
-                    'id': 'Obesity_layer',
-                    'source': 'Ward_level_data',
-                    'type': 'fill',
-                    'paint': {
-                        'fill-color': {
-                            'stops': '#2166ac',
-                            'fill-opacity': 0.7
-                        }
-                    }
-                }, 'Food_banks');
-
-            };
-
+            /*
+                        function addGeoLayer(normalised) {
+                            if (normalised) {
+                                var layer_vis = 'visible'
+                            }
+                            else {
+                                var layer_vis = 'none'
+                            }
+                            //Adds the obesity data at ward level to the map
+                            map.addLayer({
+                                'id': 'Accessible_travel',
+                                'source': 'Accessible_travel',
+                                'layout': {
+                                    'visibility': layer_vis,
+                                },
+                                'type': 'fill',
+                                'paint': {
+                                    'fill-color': '#2166ac',
+                                    'fill-opacity': 0.7
+                                }
+                                //inserted before the food outlets layer
+                            }, 'Food_outlets');
+                
+                        };
+            */
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Loading the map
@@ -458,13 +468,31 @@
                     data: 'Liverpool_lsoa.geojson'
                 });
 
-                /*
-                  // Add in the accessible travle areas data 
-                  map.addSource('Accessible_travel', {
-                      type: 'json',
-                      data: 'result.json'
-                  });
-                */
+
+
+                // Add in the accessible travle areas data 
+                map.addSource('Accessible_travel', {
+                    type: 'geojson',
+                    data: 'population.geojson'
+                });
+
+                map.addLayer({
+                    'id': 'Accessible_travel',
+                    'source': 'Accessible_travel',
+                    'layout': {
+                        'visibility': 'none',
+                    },
+                    'type': 'fill',
+                    'paint': {
+                        'fill-color': '#2166ac',
+                        'fill-opacity': 0.7
+                    }
+                    //inserted before the food outlets layer
+                }, 'Food_outlets');
+
+
+
+
 
                 // Add the data for the different layers to the map
 
@@ -746,37 +774,62 @@
                 });
 
 
+                var turned_off = 'none';
 
-
-                var food_outletLegendEl = document.getElementById('food-outlet-legend');
+                //   var food_outletLegendEl = document.getElementById('food-outlet-legend');
 
                 //    food_outletLegendEl.style.display = 'block';
 
-                $("#normalisation").click(function () {
+                //  $("#normalisation").click(function () {
 
-                    normalised = !normalised;
+                //  function myFunction() {
+                // Get the checkbox
+                //     var checkBox = document.getElementById("normalisation");
+                // Get the output text
 
-                    //  The ! reverses the value
-                    /*
-                           for (var j = 0; j < layer_list.length; j++) {
-       
-                               var currentState2 = map.getLayoutProperty(layer_list[j], 'visibility');
-                               console.log(currentState2)
-                               if (currentState2 == undefined) {
-                                   map.setLayoutProperty(layer_list[j], 'visibility', 'none');
-                               }
-       
-                               else if (currentState2 == 'undefined') {
-                                   map.setLayoutProperty(layer_list[j], 'visibility', 'none');
-                               }
-                           }
-        
-                     */      // map.removeLayer('engmusreg');
 
-                    addGeoLayer(normalised);
 
-                    // Call the function 
+                /*   $("#normalisation").click(function () {
+   
+                      
+   
+                       }; */
+
+                $('#normalisation').on('change', function () {
+                    console.log($(this)[0].checked)
+                    if ($(this)[0].checked === true) {
+                        // If the checkbox is checked, display the output text
+                        normalised = true;
+                        //  addGeoLayer(normalised);
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer']
+                        //   addGeoLayer(normalised);
+                        //  The ! reverses the value
+                        for (var j = 0; j < layer_list2.length; j++) {
+
+                            var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
+
+                            if (currentState2 == 'visible') {
+                                map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
+                                turned_off = layer_list2[j]
+                                console.log(turned_off)
+                                map.setLayoutProperty('Accessible_travel', 'visibility', 'visible')
+                            }
+                            else if (currentState2 == 'none') {
+                                map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
+
+                            }
+                        }
+
+                    }
+                    else if ($(this)[0].checked === false && turned_off !== 'none') {
+                        map.setLayoutProperty(turned_off, 'visibility', 'visible')
+                        // normalised = !normalised;
+                        ap.setLayoutProperty('Accessible_travel', 'visibility', 'none')
+                    }
+
+
                 });
+
 
 
 
