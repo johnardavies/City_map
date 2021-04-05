@@ -537,6 +537,40 @@
 
                 }
 
+                // Json for the layers that are more than 10 minutes away
+                // Import the distance 
+                var distance_data = [{ 'var_id': 'income_dist', 'data_to_plot': 'income.geojson' }
+                    , { 'var_id': 'score_dist', 'data_to_plot': 'score.geojson' }
+                    , { 'var_id': 'crowding_dist', 'data_to_plot': 'crowding.geojson' }
+                    , { 'var_id': 'education_dist', 'data_to_plot': 'education.geojson' }
+                    , { 'var_id': 'population_dist', 'data_to_plot': ' population.geojson' }
+                ]
+
+                for (var i = 0; i < distance_data.length; i++) {
+
+                    var obj = distance_data[i];
+                    // Add the sources
+                    map.addSource(obj.var_id, {
+                        type: 'geojson',
+                        data: obj.data_to_plot
+                    });
+                    // Add the layers
+                    var new_layer = map.addLayer({
+                        'id': obj.var_id,
+                        'source': obj.var_id,
+                        'layout': {
+                            'visibility': 'none',
+                        },
+                        'type': 'fill',
+                        'paint': {
+                            'fill-color': '#2166ac',
+                            'fill-opacity': 0.7
+                        }
+                        //inserted before the food outlets layer
+                    }, 'Food_outlets');
+
+                }
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The isochrone layer created by calling the mapbox API
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
