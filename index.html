@@ -103,7 +103,7 @@
             <!--value='normalise'-->
             <label class="checkbox-inline "><input type="checkbox" id='normalisation' , value='normalise'> Areas in
                 lowest
-                quintile more than 10 minutes away </label>
+                20% more than 10 minutes away </label>
 
         </form>
     </nav>
@@ -238,8 +238,8 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'education_dist', 'population_dist']
-
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist']
+                $('#normalisation').prop('checked', false);
                 for (var i = 0; i < layer_list.length; i++) {
 
                     if (layer_list[i] == layerName && currentState == 'none') {
@@ -256,31 +256,8 @@
                     }
                 }
             }
-            /*
-                        function addGeoLayer(normalised) {
-                            if (normalised) {
-                                var layer_vis = 'visible'
-                            }
-                            else {
-                                var layer_vis = 'none'
-                            }
-                            //Adds the obesity data at ward level to the map
-                            map.addLayer({
-                                'id': 'Accessible_travel',
-                                'source': 'Accessible_travel',
-                                'layout': {
-                                    'visibility': layer_vis,
-                                },
-                                'type': 'fill',
-                                'paint': {
-                                    'fill-color': '#2166ac',
-                                    'fill-opacity': 0.7
-                                }
-                                //inserted before the food outlets layer
-                            }, 'Food_outlets');
-                
-                        };
-            */
+
+
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Loading the map
@@ -544,7 +521,9 @@
                     , { 'var_id': 'score_dist', 'data_to_plot': 'score.geojson' }
                     , { 'var_id': 'crowding_dist', 'data_to_plot': 'crowding.geojson' }
                     , { 'var_id': 'education_dist', 'data_to_plot': 'education.geojson' }
-                    , { 'var_id': 'population_dist', 'data_to_plot': ' population.geojson' }
+                    , { 'var_id': 'population_dist', 'data_to_plot': 'population.geojson' }
+                    , { 'var_id': 'obesity_dist', 'data_to_plot': 'obesity.geojson' }
+                    , { 'var_id': 'morbidity_dist', 'data_to_plot': 'morbidity.geojson' }
                 ]
 
                 for (var i = 0; i < distance_data.length; i++) {
@@ -818,7 +797,10 @@
                         'Population_layer': 'population_dist',
                         'Income_layer': 'income_dist',
                         'Overcrowding_layer': 'crowding_dist',
-                        'Education_layer': 'education_dist'
+                        'Education_layer': 'education_dist',
+                        'Foodaccess_layer': 'score_dist',
+                        'Morbidity_layer': 'morbidity_dist',
+                        'Obesity_layer': 'obesity_dist'
                     };
 
                     // Function that takes a standard layer and uses the Layer_translate to map to the distance layer
@@ -829,20 +811,28 @@
                     // Applies if the checkbox is checked
                     if ($(this)[0].checked === true) {
                         //  The layers we will apply the distance subset to
-                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer']
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer']
                         // Loops through these layers
                         for (var j = 0; j < layer_list2.length; j++) {
                             // Extract if the layer is visible
                             var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
 
-                            if (currentState2 == 'visible') {
-                                // Turn off the visiblity of the current layer
+                            if (currentState2 == 'visible' & layer_list2[j] !== 'Iso_layer') {
+                                // Turn off the visiblity of the current layer unless the layer is Iso_layer
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
                                 // Store the name of the layer whose visibility has been turned off
                                 turned_off = layer_list2[j]
                                 // Select the corresponding distance layer and make it visible
                                 map.setLayoutProperty(Layer_dist(turned_off), 'visibility', 'visible')
                             }
+
+                            // If the layer is not visible do nothing
+                            else if (currentState2 == 'visible' & layer_list2[j] === 'Iso_layer') {
+                                turned_off = 'none'
+
+                            }
+
+
                             // If the layer is not visible do nothing
                             else if (currentState2 == 'none') {
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
@@ -857,6 +847,7 @@
                         map.setLayoutProperty(turned_off, 'visibility', 'visible')
                         // Turn off the distance layer        
                         map.setLayoutProperty(Layer_dist(turned_off), 'visibility', 'none')
+                        turned_off == 'none'
                     }
 
 
