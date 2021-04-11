@@ -93,21 +93,25 @@
     <div id='map'></div>
     <img src="./nesta_logo.png" id='logo' />
     <nav id="menu">
-        <a href="#" id="toggle-0">Population levels</a>
-        <a href="#" id="toggle-1">Income levels</a>
-        <a href="#" id="toggle-2">Morbidity levels</a>
-        <a href="#" id="toggle-3">Household overcrowding</a>
-        <a href="#" id="toggle-4">Education post 16</a>
-        <a href="#" id="toggle-5">E-food deserts index</a>
-        <a href="#" id="toggle-6">Reception class obesity measure</a>
-        <a href="#" id="toggle-7">Show 10 minute walking time</a>
+        <div class="layer_button">
+            <a href="#" class="btn btn-nesta" id="toggle-0">Population levels</a>
+            <a href="#" class="btn btn-nesta" id="toggle-1">Income levels</a>
+            <a href="#" class="btn btn-nesta" id="toggle-2">Morbidity levels</a>
+            <a href="#" class="btn btn-nesta" id="toggle-3">Household overcrowding</a>
+            <a href="#" class="btn btn-nesta" id="toggle-4">Education post 16</a>
+            <a href="#" class="btn btn-nesta" id="toggle-5">E-food deserts index</a>
+            <a href="#" class="btn btn-nesta" id="toggle-6">Reception class obesity level</a>
+            <a href="#" class="btn btn-nesta" id="toggle-7">Show 10 minute walking time</a>
+        </div>
         <form>
             <!--value='normalise'-->
-            <label class="checkbox-inline "><input type="checkbox" id='normalisation' , value='normalise'> Areas in
+            <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas in
                 lowest 20% more than 10 minutes away </label>
-
         </form>
     </nav>
+
+
+
     <div class='map-overlay top'>
         <!-- Slider commented out<div class='map-overlay-inner'>
     <label>Filter <span id='slider-value'></span></label>
@@ -233,6 +237,10 @@
             }
 
 
+
+
+
+
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Function that makes sure only one layer shows at one time.
@@ -240,11 +248,28 @@
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
                 var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist']
+
+
+                // This code changes the colour of the layer button that has been selected
+                $(".layer_button a").click(function (e) {
+
+                    $(this).css("background", "#da4156");
+                    $(this).css("color", "#ffffff");
+
+                    /* Sets the layer that wasn't just selected back to previous formatting */
+                    $(this).siblings().css("background", "#74b1e4");
+                    $(this).siblings().css("color", "#070707");
+                    $(this).stopPropagation()
+                });
+                // This unchecks the tick box
                 $('#normalisation').prop('checked', false);
+
+                // This changes the layer that is shown on the map
                 for (var i = 0; i < layer_list.length; i++) {
 
                     if (layer_list[i] == layerName && currentState == 'none') {
                         map.setLayoutProperty(layerName, 'visibility', 'visible');
+
                     }
 
                     else if (layer_list[i] != layerName && currentState == 'none') {
@@ -256,6 +281,9 @@
                         map.setLayoutProperty(layerName, 'visibility', newProperty);
                     }
                 }
+
+
+
             }
 
 
@@ -853,7 +881,6 @@
 
 
                 });
-
 
 
 
