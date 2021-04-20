@@ -263,7 +263,7 @@ geom= areas_not_close(Ward_level_data[Ward_level_data['Ward_Reception_Overweight
 # Print to check it's producing sensible results
 geom= geom.set_crs("EPSG:4326")
 geom.plot()
-access_layer.append(geom)
+# access_layer.append(geom) Don't add this in as it has a different geometry
 geom.to_file("Data/Out/Obesity.geojson", driver='GeoJSON')
                 
 
@@ -272,15 +272,14 @@ geom.to_file("Data/Out/Obesity.geojson", driver='GeoJSON')
 # +
 # Calculates both the union and the intersection of the the areas that have less than
 for i,x in enumerate(access_layer):
-          print(i)
-          if i==0:
+          if i==1:
              access_layer[i].set_crs('epsg:4326', inplace=True)
              access_layer[i+1].set_crs('epsg:4326', inplace=True)
              past_intersect=gpd.overlay(access_layer[i], access_layer[i+1], how='intersection')
              past_intersect.set_crs('epsg:4326', inplace=True)
              past_union=gpd.overlay(access_layer[i], access_layer[i+1], how='union')
              past_union.set_crs('epsg:4326', inplace=True)
-          elif i >0 and i <(len(access_layer)-1):
+          elif i >1 and i <(len(access_layer)-1):
              access_layer[i].set_crs("EPSG:4326")
              access_layer[i+1].set_crs("EPSG:4326") 
              past_intersect.set_crs("EPSG:4326")
@@ -305,10 +304,21 @@ ax1 = plt.subplot(221)
 ax = Liverpool_boundary.plot(color='cyan', figsize=(6,13), ax=ax1)
 ax.axis('off') # Turns the axis off
 past_intersect.plot(alpha=0.5, edgecolor='k', cmap='tab10',ax=ax1)
-# plt.title("Areas in lowest income quintiles not within 10 minutes of affordable food initative provision - Union and intersection")
+plt.title("Areas in lowest income quintiles not within 10 minutes of affordable food initative provision - Union and intersection")
 
+# +
 ax=Liverpool_boundary.plot(color='cyan', figsize=(6,13))
 past_union=gpd.overlay(past_union, Liverpool_boundary, how='intersection')
+
+
+# Dissolve the contiguous polygons
+past_union=gpd.geoseries.GeoSeries([geom for geom in past_union.unary_union.geoms]).__geo_interface__
+past_union = gpd.GeoDataFrame.from_features(past_union)
+# Sets the orientation
+past_union.geometry = past_union.geometry.apply(orient, args=(-1,))
+# Sets the projection
+past_union.set_crs('epsg:4326', inplace=True)
+
 past_union.plot(alpha=0.5, edgecolor='k', cmap='tab10', ax=ax) 
 ax.axis('off') # Turns the axis off
 plt.title("Areas in lowest income quintiles not within 10 minutes of affordable food initative provision - Union and intersection")
