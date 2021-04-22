@@ -32,8 +32,12 @@ This is taken from the [index of multiple deprivation](https://data-communities.
 
 **Data processing for map**
 
-The processing of the food standards agency and Food banks data is done using the notebook
-Liverpool_map.ipynb the files and the Dockerfile in the map_data_processing folder
+The processing of the food standards agency and Food banks data is done using the notebooks:
+**1. Liverpool_map.ipynb** This generates the geojson files for the layers (isochrone layer excepted) and the food outlet sites\
+**2. Further_analysis.ipynb** This generates geojson for areas that are in the lowest 20% of layers data and more than 10 mins from an affordable food outlet
+
+These are run within a container using the Dockerfile in the map_data_processing folder which also contains the data in the Data folder.
+They process the data and then output the files to the Out folder 
 
 To build the container image for the data processing after cloning the repo, tagging it as map_processing
 ```
