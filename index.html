@@ -244,24 +244,30 @@
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Function that makes sure only one layer shows at one time.
+
+
+            // This code changes the colour of the layer button that has been selected
+            $(".layer_button a").click(function (e) {
+
+                $(this).css("background", "#da4156");
+                $(this).css("color", "#ffffff");
+
+                /* Sets the layer that wasn't just selected back to previous formatting */
+                $(this).siblings().css("background", "#74b1e4");
+                $(this).siblings().css("color", "#070707");
+                $(this).stopPropagation()
+
+
+            });
+
+
+
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
                 var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist']
 
-
-                // This code changes the colour of the layer button that has been selected
-                $(".layer_button a").click(function (e) {
-
-                    $(this).css("background", "#da4156");
-                    $(this).css("color", "#ffffff");
-
-                    /* Sets the layer that wasn't just selected back to previous formatting */
-                    $(this).siblings().css("background", "#74b1e4");
-                    $(this).siblings().css("color", "#070707");
-                    $(this).stopPropagation()
-                });
-                // This unchecks the tick box
+                /* uncheck the tick box*/
                 $('#normalisation').prop('checked', false);
 
                 // This changes the layer that is shown on the map
@@ -270,10 +276,12 @@
                     if (layer_list[i] == layerName && currentState == 'none') {
                         map.setLayoutProperty(layerName, 'visibility', 'visible');
 
+
                     }
 
                     else if (layer_list[i] != layerName && currentState == 'none') {
                         map.setLayoutProperty(layer_list[i], 'visibility', 'none');
+
                     }
 
                     else {
@@ -281,10 +289,11 @@
                         map.setLayoutProperty(layerName, 'visibility', newProperty);
                     }
                 }
-
-
-
             }
+
+
+            // This unchecks the tick box
+
 
 
 
@@ -359,7 +368,7 @@
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
                                 ['Pub/bar/nightclub', '#fb8072'],
-                                ['Retailers - supermarkets/hypermarkets','#212F3D']
+                                ['Retailers - supermarkets/hypermarkets', '#212F3D']
                                 //       ['Mobile caterer',    '#80b1d3'],
                                 //       ['Distributors/Transporters', '#fdb462'],
                                 //       ['Manufacturers/packers' , '#fdb462']
