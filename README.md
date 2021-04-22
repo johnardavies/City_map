@@ -4,7 +4,7 @@ The map itself is visible at:
 https://johnardavies.github.io/City_map/#
 
 
-###The data that the map is based on:
+### The data that the map is based on:
 
 
 ***The general food outlet information***
