@@ -4,7 +4,7 @@ The map itself is visible at:
 https://johnardavies.github.io/City_map/#
 
 
-### The data that the map is based on:
+###The data that the map is based on:
 
 
 ***The general food outlet information***
@@ -30,7 +30,7 @@ This is an index measuring the degree to which areas have characteristics associ
 This is taken from the [index of multiple deprivation](https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0)
 
 
-### Data processing for map
+### Data processing for map
 
 The processing of the food standards agency and Food banks data is done using the notebooks:\
 
@@ -53,7 +53,7 @@ To download the processed files for the map
 $ docker cp container_id:/notebooks/Data/Out Destination_location
 ```
 
-### Viewing the map locally
+### Viewing the map locally
 
 To run the map locally
 ```
