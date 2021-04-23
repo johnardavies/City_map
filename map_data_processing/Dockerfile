@@ -14,6 +14,8 @@ RUN pip install keplergl
 RUN pip install geopy
 RUN pip install geojson
 RUN pip install geojson-rewind
+RUN pip install jupytext
+RUN pip install black
 # Create a directory in the container notebooks
 
 RUN mkdir notebooks
@@ -23,7 +25,7 @@ COPY Data/       /notebooks/Data/
 RUN mkdir /notebooks/Data/Out
 
 # Copy the notebook
-COPY Liverpool_map.ipynb  /notebooks/	
+COPY Liverpool_map.ipynb  Further_analysis.ipynb   /notebooks/	
 
 
 
