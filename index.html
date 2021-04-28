@@ -257,14 +257,34 @@
             });
 
 
-            // Function that makes sure only one layer shows at one time when the button is clicked
+=======
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Function that makes sure only one layer shows at one time.
+
+
+            // This code changes the colour of the layer button that has been selected
+            $(".layer_button a").click(function (e) {
+
+                $(this).css("background", "#da4156");
+                $(this).css("color", "#ffffff");
+
+                /* Sets the layer that wasn't just selected back to previous formatting */
+                $(this).siblings().css("background", "#74b1e4");
+                $(this).siblings().css("color", "#070707");
+                $(this).stopPropagation()
+
+
+            });
+
+
+
             function toggleLayer(layerName) {
-                // Gets the current state of the map for a given layer that is selected
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
-                // List of area layers that the map covers
+
                 var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist']
 
-                // As a layer has been selected uncheck the tick box
+                /* uncheck the tick box*/
                 $('#normalisation').prop('checked', false);
 
                 // This changes the layer that is shown on the map. 
@@ -274,10 +294,12 @@
                     if (layer_list[i] == layerName && currentState == 'none') {
                         map.setLayoutProperty(layerName, 'visibility', 'visible');
 
+
                     }
                     // Makes the unselected layers invisible
                     else if (layer_list[i] != layerName && currentState == 'none') {
                         map.setLayoutProperty(layer_list[i], 'visibility', 'none');
+
                     }
 
                     else {
@@ -285,10 +307,11 @@
                         map.setLayoutProperty(layerName, 'visibility', newProperty);
                     }
                 }
-
-
-
             }
+
+
+            // This unchecks the tick box
+
 
 
 

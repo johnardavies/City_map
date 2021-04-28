@@ -2,7 +2,7 @@
 FROM continuumio/miniconda:latest
 RUN apt-get update && apt-get install -y libgtk2.0-dev 
 
-# Install python and usefil datascience libraries   
+# Install python and useful spatial datascience libraries   
 RUN /opt/conda/bin/conda update -n base -c defaults conda && \
     /opt/conda/bin/conda install python=3.7 && \
     /opt/conda/bin/conda install anaconda-client && \
@@ -14,17 +14,21 @@ RUN pip install keplergl
 RUN pip install geopy
 RUN pip install geojson
 RUN pip install geojson-rewind
-# Create a directory in the container notebooks
+RUN pip install jupytext
+RUN pip install black
 
+# Create a directory in the container called notebooks and set it as the working directory
 RUN mkdir notebooks
 WORKDIR notebooks/
 
-COPY Data/       /notebooks/Data/  
+# Copy the local Data folder into the Data folder inside the container
+COPY Data/   /notebooks/Data/  
+
+# Create an Out folder inside the Data folder where the output of the notebooks goes to
 RUN mkdir /notebooks/Data/Out
 
 # Copy the notebook
-COPY Liverpool_map.ipynb  /notebooks/	
-
+COPY Liverpool_map.ipynb  Further_analysis.ipynb   /notebooks/	
 
 
 # Run the container on container port 8009
