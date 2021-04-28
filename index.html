@@ -38,7 +38,7 @@
                     <!-- The title of the modal popup -->
                     <h4 class="modal-title">Further information</h4>
                 </div>
-                <!-- modal-body contains the content for the pop up -->
+                <!-- modal-body contains the content for the map pop up triggered by clicking on the Read more link -->
                 <div class="modal-body">
                     <p>
                         This map is work in progress. It is being created at <a
@@ -92,6 +92,7 @@
 
     <div id='map'></div>
     <img src="./nesta_logo.png" id='logo' />
+    <!-- The buttons that selects the different layers -->
     <nav id="menu">
         <div class="layer_button">
             <a href="#" class="btn btn-nesta" id="toggle-0">Population levels</a>
@@ -104,7 +105,7 @@
             <a href="#" class="btn btn-nesta" id="toggle-7">Show 10 minute walking time</a>
         </div>
         <form>
-            <!--value='normalise'-->
+            <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
             <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas in
                 lowest 20% more than 10 minutes away </label>
         </form>
@@ -113,17 +114,14 @@
 
 
     <div class='map-overlay top'>
-        <!-- Slider commented out<div class='map-overlay-inner'>
-    <label>Filter <span id='slider-value'></span></label>
-    <input id='slider' type='range' min='0' max='60' step='1' value='0' />
-    </div> -->
+        <!--covers the link to the Read more and then the legends that indicate the colours for the different kinds of food outlets and the scales for the layers-->
         <div id="head" style="fill-color:red">
             <h1 style="color:#000000; width: 8em;">Food supply map</h1>
         </div>
 
         <div><a href="" data-toggle="modal" data-target="#myModal">[Read more]</a></div>
 
-
+        <!--The food outlet legends-->
         <!-- Some of the categories are removed as they seem less relevant to the analysis  -->
         <div id="legend" class="legend" style="display: block">
             <h4>Food supply outlets</h4>
@@ -146,6 +144,7 @@
 
             <!--   <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button> -->
         </div>
+        <!--The legend for the different values of the layers-->
         <div id="scale-legend" class="scale-legend" style="display: block">
             <h4>Scale</h4>
             <div><span style="background-color:#fddbc7"></span>Highest 20%</div>
@@ -155,7 +154,10 @@
             <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
         </div>
 
-        <script>mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+        <script>
+
+            // The mapbox token 
+            mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
 
             // The function to colour the map layers
             function colorDictList2Array(colorDictList) {
@@ -169,7 +171,7 @@
             }
 
 
-            // The colours for the quintiles
+            // The colours for the quintiles in the area layers
             var growthColorStops = [
                 { offset: 1, color: "#fddbc7" },
                 { offset: 2, color: "#f7f7f7" },
@@ -182,8 +184,8 @@
 
             // Create variables to use in the travel time api calls
             var urlBase = 'https://api.mapbox.com/isochrone/v1/mapbox/';
-            var profile = 'walking';
-            var minutes = 10;
+            var profile = 'walking';  //The mapbox call is for a walking isochrone
+            var minutes = 10;  // The mapbox call is for walking 10 minutes
 
             // Function that is used to make the travel time api calls
             function make_api(coord) {
@@ -203,7 +205,7 @@
             }
 
 
-
+            // The bounding box for the map
             var bounds = [
 
                 [-3.0542, 53.295875], // Southwest coordinates
@@ -223,9 +225,9 @@
                 container: 'map',
                 style: 'mapbox://styles/mapbox/basic-v9',
 
-                center: [-2.92413, 53.40938],
-                minZoom: 0.1,
-                zoom: 10,  // The bigger the zoom number the closer in you go was 10
+                center: [-2.92413, 53.40938], // The coordinate that the map is centred on
+                minZoom: 0.1,  // The minimum zoom level that the map allows
+                zoom: 10,  // The bigger the zoom number the closer in you 
                 pitch: 40, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds
@@ -237,10 +239,25 @@
             }
 
 
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+            // This code changes the colour of the layer button that has been selected so it is clear which
+            // layer has been selected
+            $(".layer_button a").click(function (e) {
+                // Changes the button to show it has been selected
+                $(this).css("background", "#da4156");
+                $(this).css("color", "#ffffff");
+
+                /* Sets the layer that wasn't just selected back to previous formatting */
+                $(this).siblings().css("background", "#74b1e4");
+                $(this).siblings().css("color", "#070707");
+                $(this).stopPropagation()
+            });
 
 
+=======
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Function that makes sure only one layer shows at one time.
@@ -270,15 +287,16 @@
                 /* uncheck the tick box*/
                 $('#normalisation').prop('checked', false);
 
-                // This changes the layer that is shown on the map
+                // This changes the layer that is shown on the map. 
+                // It loops through all the layers makes the selected area layer button visible and the others invisible
                 for (var i = 0; i < layer_list.length; i++) {
-
+                    // Makes the layer that has been selected visible
                     if (layer_list[i] == layerName && currentState == 'none') {
                         map.setLayoutProperty(layerName, 'visibility', 'visible');
 
 
                     }
-
+                    // Makes the unselected layers invisible
                     else if (layer_list[i] != layerName && currentState == 'none') {
                         map.setLayoutProperty(layer_list[i], 'visibility', 'none');
 
@@ -305,6 +323,7 @@
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The food outlet information  For general food outlets, food banks and the affordable food initatives
+                // This is spatial points data
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -383,11 +402,11 @@
 
                     }
 
-                }, 'Food_banks');
+                }, 'Food_banks');  // Adds in before food banks
 
 
 
-                // Adds in the data on the location of food affordability initatives
+                // Adds in the data on the location of affordable food initatives
                 map.addSource('Food_affordability', {
                     type: 'geojson',
                     data: 'Affordable_food_iniatives.geojson'
@@ -413,11 +432,11 @@
                             ]
                         }
                     }
-                }, 'Food_banks');
+                }, 'Food_banks'); //Adds in before food banks
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // The Liverpool boundary information
+                // The Liverpool boundary information. This is just the boundary of Liverpool. 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //Adds the source for a Liverpool border
@@ -442,7 +461,7 @@
                         'line-width': 2 //The original value was 1
                     }
 
-                }, 'Food_banks');
+                }, 'Food_banks');  // Adds in before food banks
 
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -453,7 +472,6 @@
                     type: 'geojson',
                     data: 'Liverpool_wards.geojson'
                 });
-
 
 
                 //Adds the obesity data at ward level to the map
@@ -476,6 +494,7 @@
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The index of multiple deprivation data and e-food-deset index at lower super output area (lsoa)
+                // This is spatial polygons data
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 // Add in the lower super output areas
@@ -483,7 +502,6 @@
                     type: 'geojson',
                     data: 'Liverpool_lsoa.geojson'
                 });
-
 
 
                 // Add in the accessible travle areas data 
@@ -504,9 +522,7 @@
                         'fill-opacity': 0.7
                     }
                     //inserted before the food outlets layer
-                }, 'Food_outlets');
-
-
+                }, 'Food_outlets');  // Adds in before the food outlets layer
 
 
 
@@ -520,13 +536,13 @@
                         'id': x,
                         'source': 'Index_mult_dep',
                         'layout': {
-                            'visibility': 'none',
+                            'visibility': 'none',  // The layers are all initially added as invisible
                         },
                         'type': 'fill',
                         'paint': {
                             'fill-color': {
                                 property: y,
-                                stops: colorDictList2Array(growthColorStops),
+                                stops: colorDictList2Array(growthColorStops),  // Function that colours the layers according to quintile
                             }, 'fill-opacity': 0.7
                         }
 
@@ -535,7 +551,7 @@
                     return new_layer;
 
                 }
-
+                // Add in the background area information at the lsoa level
                 // Json for the lsoa layers data that the map shows
 
                 var mult_ind_dep = [{ 'var_id': 'Foodaccess_layer', 'data_to_plot': 'Score_rank' }
@@ -545,16 +561,16 @@
                     , { 'var_id': 'Education_layer', 'data_to_plot': 'Staying on in education post 16 indicator_rank' }
                     , { 'var_id': 'Population_layer', 'data_to_plot': 'Total population: mid 2015 (excluding prisoners)_rank' }
                 ]
-                // Loop through and plot on the map
+                // Loop through the json corresponding to these layers and add them to the map
                 for (var i = 0; i < mult_ind_dep.length; i++) {
 
                     var obj = mult_ind_dep[i];
                     add_mult_dep(obj.var_id, obj.data_to_plot);
 
                 }
-
+                // Add in the travel time and lowest quinitle layers
                 // Json for the layers that are more than 10 minutes away
-                // Import the distance 
+
                 var distance_data = [{ 'var_id': 'income_dist', 'data_to_plot': 'income.geojson' }
                     , { 'var_id': 'score_dist', 'data_to_plot': 'score.geojson' }
                     , { 'var_id': 'crowding_dist', 'data_to_plot': 'crowding.geojson' }
@@ -563,7 +579,7 @@
                     , { 'var_id': 'obesity_dist', 'data_to_plot': 'obesity.geojson' }
                     , { 'var_id': 'morbidity_dist', 'data_to_plot': 'morbidity.geojson' }
                 ]
-
+                // Loop through the distance layers and add them to the map
                 for (var i = 0; i < distance_data.length; i++) {
 
                     var obj = distance_data[i];
@@ -577,7 +593,7 @@
                         'id': obj.var_id,
                         'source': obj.var_id,
                         'layout': {
-                            'visibility': 'none',
+                            'visibility': 'none',  // Layers are all added without visibility
                         },
                         'type': 'fill',
                         'paint': {
@@ -607,7 +623,7 @@
 
                 var arr = [];
                 var arr_bank = [];
-
+                // Import the affordable food initatives data as a geojson - This is a duplicate import. See if this is needed 
                 d3.json(
                     'Affordable_food_iniatives.geojson',
                     function (err, data) {
