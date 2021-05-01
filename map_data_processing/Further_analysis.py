@@ -13,6 +13,10 @@
 #     name: python3
 # ---
 
+# # Introduction
+# This notebook analyses which parts of the city that have lower income levels are not within 10 minutes of affordable food initative provision.
+# It is work in progress and should not be quoted. It requires the other notebook in the container to be run first.
+
 # +
 import pandas as pd #importing the Pandas Library as 'pd'
 import numpy as np
@@ -39,10 +43,6 @@ import matplotlib.pyplot as plt
 from time import time
 # -
 
-# # Introduction
-# This notebook analyses which parts of the city that have lower income levels are not within 10 minutes of affordable food initative provision.
-# It is work in progress and should not be quoted. It requires the other notebook in the container to be run first.
-
 # # Takes the food outlet locations, calculate 10 minute isochrone and convert to geojson
 
 ## Reads in the Liverpool boundary file
@@ -58,17 +58,11 @@ file = open(filename)
 Affordable_food_outlets = gpd.read_file(file)
 
 # +
-# Read in Foodbanks
-filename = "Data/Out/Foodbanks.geojson"
+# Read in Emergency_food_suppliers
+filename = "Data/Out/Emergency_food_suppliers.geojson"
 
 file = open(filename)
-Food_banks = gpd.read_file(file)
-
-# +
-filename = "Data/Out/Affordable_food_iniatives.geojson"
-
-file = open(filename)
-Affordable_food_outlets = gpd.read_file(file)
+Emergency_food_suppliers = gpd.read_file(file)
 
 # +
 # Characteristics for API calls to calculate 10 minute walking time
@@ -95,10 +89,10 @@ def isochrone_api(x):
 # Call the isochrone API for each of the food output locations
 Affordable_food_outlets['walking_dist']=Affordable_food_outlets.apply(isochrone_api,axis=1)
 
-Food_banks['walking_dist']=Food_banks.apply(isochrone_api,axis=1)
+Emergency_food_suppliers['walking_dist']=Emergency_food_suppliers.apply(isochrone_api,axis=1)
 
 # Take the outputs and turn into json
-travel_distances = FeatureCollection(Affordable_food_outlets['walking_dist'].values.tolist()+Food_banks['walking_dist'].values.tolist())
+travel_distances = FeatureCollection(Affordable_food_outlets['walking_dist'].values.tolist()+Emergency_food_suppliers['walking_dist'].values.tolist())
 
 # Ensures geojson follows the right handed rule
 travel_distances= rewind(travel_distances)

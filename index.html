@@ -125,7 +125,8 @@
         <!-- Some of the categories are removed as they seem less relevant to the analysis  -->
         <div id="legend" class="legend" style="display: block">
             <h4>Food supply outlets</h4>
-            <div><span style="background-color: red"></span>Food banks</div>
+            <div><span style="background-color: red"></span>Emergency food parcel provider</div>
+            <div><span style="background-color: brown"></span>Emergency meal provider</div>
             <div><span style="background-color: #ffff00"></span>Food pantries</div>
             <div><span style="background-color:  blue"></span>Free food initatives</div>
             <div><span style="background-color: #008000"></span>Community cafes</div>
@@ -329,7 +330,7 @@
                 // Adds in the foodbank data
                 map.addSource('Food_banks', {
                     type: 'geojson',
-                    data: 'Foodbanks.geojson'
+                    data: 'Emergency_food_suppliers.geojson'
                 });
 
                 // Adds the foodbank data to the map
@@ -342,7 +343,19 @@
                         //'icon-image': 'custom-marker'
                     },
                     'paint': {
-                        'circle-color': 'red'
+                        //    'circle-radius': {
+                        //         'base': 3,
+                        //        'stops': [[12, 3], [22, 140]]
+                        //    },
+                        'circle-color': {
+                            property: 'Category',
+                            type: 'categorical',
+                            stops: [
+                                // Note some of the below are filtered out at above
+                                ['Food_parcels', 'red'],
+                                ['Meal_providers', 'brown']
+                            ]
+                        }
                     }
 
 
@@ -640,7 +653,7 @@
                         // Loads the foodbanks data
 
                         d3.json(
-                            'Foodbanks.geojson',
+                            'Emergency_food_suppliers.geojson',
                             function (err, data2) {
                                 if (err) throw err;
 
@@ -799,8 +812,8 @@
 
                 map.on('click', 'Food_banks', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
-                    var foodbank_name = e.features[0].properties['Company Name'];
-
+                    var foodbank_name = e.features[0].properties['Name'];
+                    var foodbank_type = e.features[0].properties['Category'];
 
                     // Ensure that if the map is zoomed out such that multiple
                     // copies of the feature are visible, the popup appears
@@ -811,7 +824,7 @@
 
                     new mapboxgl.Popup()
                         .setLngLat(coordinates)
-                        .setHTML('<h3>' + 'Food bank:' + '</h3><p>' + foodbank_name + '</p>')
+                        .setHTML('<h3>' + foodbank_type + ': ' + '</h3><p>' + foodbank_name + '</p>')
 
                         .addTo(map);
                 });
