@@ -381,7 +381,7 @@
                         ['==', 'BusinessType', 'Restaurant/Cafe/Canteen'],
                         ['==', 'BusinessType', 'Takeaway/sandwich shop'],
                         ['==', 'BusinessType', 'Pub/bar/nightclub'],
-                        ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
+
 
                     ],
                     'paint': {
@@ -398,8 +398,7 @@
                                 ['Restaurant/Cafe/Canteen', '#8dd3c7'],
                                 ['Retailers - other', '#ccebc5'],
                                 ['Takeaway/sandwich shop', '#bebada'],
-                                ['Pub/bar/nightclub', '#fb8072'],
-                                ['Retailers - supermarkets/hypermarkets', '#212F3D']
+                                ['Pub/bar/nightclub', '#fb8072']
                                 //       ['Mobile caterer',    '#80b1d3'],
                                 //       ['Distributors/Transporters', '#fdb462'],
                                 //       ['Manufacturers/packers' , '#fdb462']
@@ -407,6 +406,44 @@
                                 //       ['School/college/university', '#fdb462'],
                                 //       ['Other catering premises',   '#b3de69'],
                                 //       ['Hotel/bed & breakfast/guest house',  '#ccc'],
+                            ]
+                        }
+
+
+
+                    }
+
+                }, 'Food_banks');  // Adds in before food banks
+
+
+                // Adds in the Food standards agency food outlet data
+                map.addSource('Supermarkets', {
+                    type: 'geojson',
+                    data: 'Supermarkets_geo.geojson'
+                });
+
+
+                // Adds the supermarkets as a separate layer
+                map.addLayer({
+                    'id': 'Supermarkets',
+                    'type': 'circle',
+                    'source': 'Supermarkets',
+                    'layout': {
+                        //'icon-image': 'custom-marker'
+                    },
+                    'filter': ["any",
+                        // Filter to keep the outlets most relevant for the analysis i.e. those that are consumer related rather than b2b or institutional
+                        ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
+                    ],
+                    'paint': {
+
+                        'circle-color': {
+                            property: 'BusinessType',
+                            type: 'categorical',
+                            stops: [
+                                // Note some of the below are filtered out at above
+                                ['Retailers - supermarkets/hypermarkets', '#212F3D']
+
                             ]
                         }
 
@@ -787,6 +824,32 @@
                 /////////////////////////////////////////////////////////////
 
                 map.on('click', 'Food_outlets', function (e) {
+                    var coordinates = e.features[0].geometry.coordinates.slice();
+                    var description = e.features[0].properties.BusinessType;
+                    var outlet_name = e.features[0].properties.BusinessName;
+                    var la_business_id = e.features[0].properties.LocalAuthorityBusinessID
+
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to.
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+
+                    new mapboxgl.Popup()
+                        .setLngLat(coordinates)
+                        .setHTML('<h3>' + outlet_name + '</h3><p>' + description + '</p><p>' + 'Local authority business id ' + la_business_id + '</p>')
+
+                        .addTo(map);
+                });
+
+
+
+                /////////////////////////////////////////////////////////////
+                // Add a pop up that shows info on food outlets when selected
+                /////////////////////////////////////////////////////////////
+
+                map.on('click', 'Supermarkets', function (e) {
                     var coordinates = e.features[0].geometry.coordinates.slice();
                     var description = e.features[0].properties.BusinessType;
                     var outlet_name = e.features[0].properties.BusinessName;
