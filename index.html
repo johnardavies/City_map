@@ -94,7 +94,7 @@
     <img src="./nesta_logo.png" id='logo' />
     <!-- The buttons that selects the different layers -->
     <nav id="menu">
-        <div class="layer_button">
+        <div class="layer_button" id="buttons">
             <a href="#" class="btn btn-nesta" id="toggle-0">Population levels</a>
             <a href="#" class="btn btn-nesta" id="toggle-1">Income levels</a>
             <a href="#" class="btn btn-nesta" id="toggle-2">Morbidity levels</a>
@@ -109,8 +109,17 @@
             <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas in
                 lowest 20% more than 10 minutes away </label>
         </form>
-    </nav>
+        <div class="layer_button" id="buttons">
+            <a href="#" class="btn btn-nesta" id="toggle-add1">Food bank voucher users</a>
+            <a href="#" class="btn btn-nesta" id="toggle-add2">Food pantry members</a>
 
+        </div>
+        <form>
+            <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
+            <!--     <label class="checkbox-inline"><input type="checkbox" id='normalisation2' , value='normalise'> Show
+                approximate journey to food bank </label> -->
+        </form>
+    </nav>
 
 
     <div class='map-overlay top'>
@@ -178,7 +187,8 @@
                 { offset: 2, color: "#f7f7f7" },
                 { offset: 3, color: "#d1e5f0" },
                 { offset: 4, color: "#67a9cf" },
-                { offset: 5, color: "#2166ac" },
+                { offset: 5, color: "#2166ac" }
+                // { offset: '<NA>', color: "#FF2166ac" }
             ]
 
 
@@ -282,7 +292,7 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist']
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users']
 
                 /* uncheck the tick box*/
                 $('#normalisation').prop('checked', false);
@@ -654,6 +664,49 @@
 
                 }
 
+                // Adds in the Users data
+                map.addSource('Foodbank_users', {
+                    type: 'geojson',
+                    data: 'Foodbank_pantry_use.geojson'
+                });
+
+
+                map.addLayer({
+                    'id': 'Foodbank_users',
+                    'source': 'Foodbank_users',
+                    'layout': {
+                        'visibility': 'none',
+                    },
+                    'type': 'fill',
+                    'paint': {
+                        'fill-color': {
+                            property: 'Total_rank',
+                            stops: colorDictList2Array(growthColorStops),
+                        }, 'fill-opacity': 0.7
+                    }
+                    //inserted before the food outlets layer
+                }, 'Food_outlets');  // Adds in before the food outlets layer
+
+                map.addLayer({
+                    'id': 'Foodpantry_users',
+                    'source': 'Foodbank_users',
+                    'layout': {
+                        'visibility': 'none',
+                    },
+                    'type': 'fill',
+                    'paint': {
+                        'fill-color': {
+                            property: 'Pantry_members_number_rank',
+                            stops: colorDictList2Array(growthColorStops),
+                        }, 'fill-opacity': 0.7
+                    }
+                    //inserted before the food outlets layer
+                }, 'Food_outlets');  // Adds in before the food outlets layer
+
+
+
+
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The isochrone layer created by calling the mapbox API
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -801,6 +854,8 @@
                     , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
                     , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer' }
                     , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
+                    , { 'button_id': 'toggle-add1', 'layer_to_link': 'Foodbank_users' }
+                    , { 'button_id': 'toggle-add2', 'layer_to_link': 'Foodpantry_users' }
 
                 ]
 
@@ -917,6 +972,10 @@
                 });
 
 
+
+
+
+
                 var turned_off = 'none';
 
 
@@ -940,13 +999,13 @@
                     // Applies if the checkbox is checked
                     if ($(this)[0].checked === true) {
                         //  The layers we will apply the distance subset to
-                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer']
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer', 'Foodbank_users', 'Foodpantry_users']
                         // Loops through these layers
                         for (var j = 0; j < layer_list2.length; j++) {
                             // Extract if the layer is visible
                             var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
 
-                            if (currentState2 == 'visible' & layer_list2[j] !== 'Iso_layer') {
+                            if (currentState2 == 'visible' & (layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Foodbank_users' || layer_list2[j] !== 'Foodpantry_users')) {
                                 // Turn off the visiblity of the current layer unless the layer is Iso_layer
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
                                 // Store the name of the layer whose visibility has been turned off
@@ -956,7 +1015,7 @@
                             }
 
                             // If the layer is not visible do nothing
-                            else if (currentState2 == 'visible' & layer_list2[j] === 'Iso_layer') {
+                            else if (currentState2 == 'visible' & (layer_list2[j] === 'Iso_layer' || layer_list2[j] === 'Foodbank_users' || layer_list2[j] === 'Foodpantry_users')) {
                                 turned_off = 'none'
 
                             }
