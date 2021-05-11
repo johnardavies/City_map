@@ -156,12 +156,20 @@
         </div>
         <!--The legend for the different values of the layers-->
         <div id="scale-legend" class="scale-legend" style="display: block">
-            <h4>Scale</h4>
+            <h4>Scale for area information</h4>
             <div><span style="background-color:#fddbc7"></span>Highest 20%</div>
             <div><span style="background-color: #f7f7f7"></span>80%-60%</div>
             <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
             <div><span style="background-color: #67a9cf"></span>40%-20%</div>
             <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
+        </div>
+        <div id="scale-legend2" class="scale-legend2" style="display: block">
+            <h4>Scale for Food bank & pantry usage levels</h4>
+            <div><span style="background-color:#edf8e9"></span>Highest 20%</div>
+            <div><span style="background-color: #bae4b3"></span>80%-60%</div>
+            <div><span style="background-color:#74c476" </span>Middle 20%</div>
+            <div><span style="background-color: #31a354"></span>40%-20%</div>
+            <div><span style="background-color: #006d2c"></span>Lowest 20%</div>
         </div>
 
         <script>
@@ -190,6 +198,23 @@
                 { offset: 5, color: "#2166ac" }
                 // { offset: '<NA>', color: "#FF2166ac" }
             ]
+
+            var growthColorStops_reverse = [
+                { offset: 1, color: "#2166ac" },
+                { offset: 2, color: "#67a9cf" },
+                { offset: 3, color: "#d1e5f0" },
+                { offset: 4, color: "#f7f7f7" },
+                { offset: 5, color: "#fddbc7" },
+            ]
+
+            var growthColorStops_users = [
+                { offset: 1, color: "#edf8e9" },
+                { offset: 2, color: "#bae4b3" },
+                { offset: 3, color: "#74c476" },
+                { offset: 4, color: "#31a354" },
+                { offset: 5, color: "#006d2c" },
+            ]
+
 
 
 
@@ -544,7 +569,7 @@
                     'paint': {
                         'fill-color': {
                             property: 'Ward_Reception_Overweight_Obese_rank',
-                            stops: colorDictList2Array(growthColorStops),
+                            stops: colorDictList2Array(growthColorStops_reverse),
                         }, 'fill-opacity': 0.7
                     }
 
@@ -681,7 +706,7 @@
                     'paint': {
                         'fill-color': {
                             property: 'Total_rank',
-                            stops: colorDictList2Array(growthColorStops),
+                            stops: colorDictList2Array(growthColorStops_users),
                         }, 'fill-opacity': 0.7
                     }
                     //inserted before the food outlets layer
@@ -697,7 +722,7 @@
                     'paint': {
                         'fill-color': {
                             property: 'Pantry_members_number_rank',
-                            stops: colorDictList2Array(growthColorStops),
+                            stops: colorDictList2Array(growthColorStops_users),
                         }, 'fill-opacity': 0.7
                     }
                     //inserted before the food outlets layer
