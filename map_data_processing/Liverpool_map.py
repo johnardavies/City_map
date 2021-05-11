@@ -32,6 +32,8 @@ import xml.etree.ElementTree as ET
 
 import requests
 
+import re
+
 from time import time
 # -
 
@@ -151,15 +153,25 @@ geolocator = Nominatim(user_agent="Liverpool_analysis")
 
 
 # +
-# The geocoding function
+# The geocoding function  x is the full address, y is the postcode as a back up if the address fails
 
-def long_lat_func(x):
+def long_lat_func(x, y):
   try:
     location = geolocator.geocode(str(x))
     # Parse the tuple
     return location.latitude , location.longitude
   except:
-    return None, None
+    # Something causing an issue on the address, try on the postcode if it exists
+   if y!="missing":
+     try:
+        location = geolocator.geocode(str(y))
+        return location.latitude , location.longitude
+     # Postcode geocode fails return nothing
+     except:
+      return None, None
+  # If no postcode at all just return nothing
+   else:
+      return None, None
 
 
 # -
@@ -177,7 +189,7 @@ pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 addresses = ['58 Victoria Embankment, London', 'Ferry Road, Edinburgh'] l
 ocations = pool.map(worker, addresses) '''
 
-# # Adding in the restaurant locations
+# # Adding in food outlet locations
 
 # Example of the xml that is being parsed
 '''
@@ -222,6 +234,7 @@ rows = []
 
 food_outlets_df  = pd.DataFrame(rows, columns = df_cols)
 
+# Some of this parsing could be tidied up
 for neighbor in root.iter('EstablishmentCollection'):
    for node in neighbor:
        bus_laid=node.find("LocalAuthorityBusinessID").text  if node is not None else None
@@ -261,11 +274,37 @@ food_outlets_df.head(n=5)
 
 pd.DataFrame(food_outlets_df["BusinessType"].value_counts())
 
+
 # +
-# Applies the geocoding function
+# Functions to tidy up the address information that is proving hard to geocode
+
+# Remove text before the first comma as this seems typically to be the name of the business which is throwing the geocoder
+def trim_name(x):
+    return re.sub(r'^.*?,', '',x)
+
+# Remove text before supermarket (case insensitive) as this is typically the name of a supermarket
+def trim_supermarket(x):
+    return re.sub(r'^.*?supermarket', '',x, flags=re.IGNORECASE)
+
+
+# +
+
+# Strips the text before the column as this seems to almost always be a name that is throwing the geocoding
+food_outlets_df["BusinessAddress_clean"]=food_outlets_df["BusinessAddress"].apply(lambda x: trim_name(x))
+# Remove the text that appears before the word supermarket as this also seems to call
+food_outlets_df["BusinessAddress_clean"]=food_outlets_df["BusinessAddress_clean"].apply(lambda x:trim_supermarket(x))
+
+# Create a new postcode variable that makes it clear we are talking about Liverpool in the UK to avoid confusing geocoder
+food_outlets_df["Postcode_clean"]=np.where(food_outlets_df["Postcode"]!="missing",food_outlets_df["Postcode"]+", Liverpool, UK"
+                                           , food_outlets_df["Postcode"])
+
+
+# +
+
+# Applies the geocoding function takes about 40 minutes uses the cleaned business address with the postcode as a backup
 
 start_time = time()
-food_outlets_df["lat"] , food_outlets_df["lon"] = zip(*food_outlets_df["BusinessAddress"].apply(long_lat_func))
+food_outlets_df["lat"] , food_outlets_df["lon"] = zip(*food_outlets_df.apply(lambda x: long_lat_func(x["BusinessAddress_clean"], x["Postcode_clean"]), axis=1))
 
 time_elapsed= round((time() - start_time)/60,2)
 print("--- %s minutes ---" % (time_elapsed))
@@ -275,25 +314,44 @@ food_outlets_df.head(n=5)
 
 # +
 # Subsets to drop the na terms
-food_outlets_df=food_outlets_df.dropna(subset=['lon', 'lat'])
+food_outlets_df_clean=food_outlets_df.dropna(subset=['lon', 'lat'])
 
-
-# Subsets to drop the na terms
-food_outlets_df =food_outlets_df[food_outlets_df["Postcode"]!="missing"]
 
 #Converts the longitude and latitude as points data to give the geocoordinates for the data frame
-geometry = [Point(xy) for xy in zip(food_outlets_df['lon'], food_outlets_df['lat'])]
+geometry = [Point(xy) for xy in zip(food_outlets_df_clean['lon'], food_outlets_df_clean['lat'])]
 
 
+# Create a GeoDataFrame from the food_outlets
+food_outlets_geo = gpd.GeoDataFrame(food_outlets_df_clean, crs = 'epsg:4326' , geometry = geometry)
 
-# Create a GeoDataFrame from art and verify the type
-food_outlets_geo = gpd.GeoDataFrame(food_outlets_df, crs = 'epsg:4326' , geometry = geometry)
+
+# Select the food outlets that fall within Liverpool lsoas
+food_outlets_geo = gpd.overlay(food_outlets_geo , Liverpool_lsoa, how='intersection')
+
+# Split out supermarkets as it makes it easier to handle them
+
+# Split out the supermarkets
+supermarkets =food_outlets_geo[food_outlets_geo["BusinessType"]=='Retailers - supermarkets/hypermarkets']
+                                                          
+# Other food outlets
+food_outlets_geo=food_outlets_geo[food_outlets_geo["BusinessType"]!='Retailers - supermarkets/hypermarkets']
 
 
+# -
+
+supermarkets.plot()
+
+supermarkets
+
+
+food_outlets_geo.plot()
+
+# +
 # Write out the food outlets location as a geojson for use in the mapbox map
 food_outlets_geo.to_file("Data/Out/Food_outlets_geo.geojson", driver='GeoJSON')
 
-
+# Write out the supermarkets
+supermarkets.to_file("Data/Out/Supermarkets_geo.geojson", driver='GeoJSON')
 # -
 
 # # Adding in food initatives
@@ -394,7 +452,7 @@ Emergency_food_suppliers = pd.concat([Food_parcel,Meal_providers] , ignore_index
 
 # -
 
-Emergency_food_suppliers 
+Emergency_food_suppliers['Category'].value_counts() 
 
 
 Emergency_food_suppliers['Addresses']=Emergency_food_suppliers['Address']+" "+Emergency_food_suppliers["Postcode"]+" "+" UK"
@@ -428,6 +486,12 @@ Emergency_food_suppliers= gpd.GeoDataFrame(Emergency_food_suppliers, crs = 'epsg
 Emergency_food_suppliers.plot()
 
 Emergency_food_suppliers.to_file("Data/Out/Emergency_food_suppliers.geojson", driver='GeoJSON')
+
+conda install seaborn
+
+# ! pip install geoplot
+
+Emergency_food_suppliers["categ"]
 
 # # Extract the ward area boundaries from the API
 
@@ -613,6 +677,124 @@ Liverpool_wards_expand.total_bounds
 Liverpool_wards_expand.geometry.iloc[0] = shapely.affinity.scale(Liverpool_wards_expand.geometry.iloc[0], xfact=1.05, yfact=1.05, origin='center')
 
 Liverpool_wards_expand.total_bounds
+
+# # Generate a whole set of density plots
+
+# +
+import geopandas as gpd
+import geoplot as gplt
+import geoplot.crs as gcrs
+import matplotlib.pyplot as plt
+
+
+
+proj = gcrs.AlbersEqualArea(central_latitude=53.40938, central_longitude=-2.92413)  
+fig = plt.figure(figsize=(10,5))
+ax1 = plt.subplot(121, projection=proj)
+#ax2 = plt.subplot(122, projection=proj)
+
+gplt.kdeplot(supermarkets,
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax1
+)
+#gplt.polyplot(Liverpool_boundary, zorder=1, ax=ax1)
+ax1.set_title("Supermarkets")
+
+# +
+proj = gcrs.AlbersEqualArea(central_latitude=53.40938, central_longitude=-2.92413)  
+fig = plt.figure(figsize=(10,5))
+ax1 = plt.subplot(121, projection=proj)
+#ax2 = plt.subplot(122, projection=proj)
+
+gplt.kdeplot(food_outlets_geo[food_outlets_geo["BusinessType"]=='Takeaway/sandwich shop'],
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax1
+)
+ax1.set_title("Takeaway/sandwich shop")
+
+
+# +
+proj = gcrs.AlbersEqualArea(central_latitude=53.40938, central_longitude=-2.92413)  
+fig = plt.figure(figsize=(10,5))
+
+ax1 = plt.subplot(121, projection=proj)
+ax2 = plt.subplot(122, projection=proj) 
+ax3 = plt.subplot(213, projection=proj)
+ax3 = plt.subplot(224, projection=proj) 
+
+gplt.kdeplot(food_outlets_geo[food_outlets_geo["BusinessType"]=='Restaurant/Cafe/Canteen'],
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax1
+)
+
+ax1.set_title('Restaurant/Cafe/Canteen')
+
+
+
+gplt.kdeplot(food_outlets_geo[food_outlets_geo["BusinessType"]=='Pub/bar/nightclub'],
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax2
+)
+
+ax2.set_title('Pub bar nightclub')
+
+
+gplt.kdeplot(supermarkets,
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax3
+)
+#gplt.polyplot(Liverpool_boundary, zorder=1, ax=ax1)
+ax3.set_title("Supermarkets")
+
+
+gplt.kdeplot(Emergency_food_suppliers[Emergency_food_suppliers["Category"]=="Meal_providers"] ,
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax4
+)
+#gplt.polyplot(Liverpool_boundary, zorder=1, ax=ax1)
+ax4.set_title("Meal providers")
+
+
+
+# +
+Emergency_food_suppliers[Emergency_food_suppliers["Category"]=="Food_parcels"] 
+
+proj = gcrs.AlbersEqualArea(central_latitude=53.40938, central_longitude=-2.92413)  
+fig = plt.figure(figsize=(10,5))
+ax1 = plt.subplot(121, projection=proj)
+#  "Food_parcels"
+gplt.kdeplot(Emergency_food_suppliers[Emergency_food_suppliers["Category"]=="Meal_providers"]  ,
+    cmap='Reds',
+    projection=proj,
+    shade=True, shade_lowest=False,
+    clip=Liverpool_wards.geometry,
+    ax=ax1
+)
+
+
+# -
+
+Pantry                  27
+Free_food_inititives    14
+Community_cafes  
 
 # Check that everything has been written out
 # ! ls Data
