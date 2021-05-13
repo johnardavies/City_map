@@ -247,8 +247,8 @@
             // The bounding box for the map
             var bounds = [
 
-                [-3.0542, 53.295875], // Southwest coordinates
-                [-2.7812, 53.510825]  // Northeast coordinates
+                [-3.24471632, 53.2401742],  // Was [-3.0542, 53.295875], Southwest coordinates
+                [-2.707879, 53.559962]   // Was [-2.7812, 53.510825]   Northeast coordinates
             ];
 
             var zoomThreshold = 4;
@@ -264,9 +264,9 @@
                 container: 'map',
                 style: 'mapbox://styles/mapbox/basic-v9',
 
-                center: [-2.92413, 53.40938], // The coordinate that the map is centred on
-                minZoom: 2,  // The minimum zoom level that the map allows
-                zoom: 3,  // The bigger the zoom number the closer in you 
+                center: [53.900000, -2.963450], // The coordinate that the map is centred on
+                minZoom: 1,  // The minimum zoom level that the map allows
+                zoom: 8,  // The bigger the zoom number the closer in you 
                 pitch: 0, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds
@@ -381,10 +381,10 @@
                         //'icon-image': 'custom-marker'
                     },
                     'paint': {
-                        //    'circle-radius': {
-                        //         'base': 3,
-                        //        'stops': [[12, 3], [22, 140]]
-                        //    },
+                        'circle-radius': {
+                            //   'base': 20,  // Format zoom level size 8 size, zoom level 11 size 4
+                            'stops': [[8, 1.2], [11, 4], [16, 5]]
+                        },
                         'circle-color': {
                             property: 'Category',
                             type: 'categorical',
@@ -474,7 +474,10 @@
                         ['==', 'BusinessType', 'Retailers - supermarkets/hypermarkets']
                     ],
                     'paint': {
-
+                        'circle-radius': {
+                            //   'base': 20,
+                            'stops': [[8, 1.2], [11, 4], [16, 5]]
+                        },
                         'circle-color': {
                             property: 'BusinessType',
                             type: 'categorical',
@@ -507,6 +510,10 @@
                     'layout': {
                     },
                     'paint': {
+                        'circle-radius': {
+                            //   'base': 20,
+                            'stops': [[8, 1.2], [11, 4], [16, 5]]
+                        },
                         'circle-color': {
                             property: 'Category',
                             type: 'categorical',
