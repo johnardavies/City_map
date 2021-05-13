@@ -102,7 +102,8 @@
             <a href="#" class="btn btn-nesta" id="toggle-4">Education post 16</a>
             <a href="#" class="btn btn-nesta" id="toggle-5">E-food deserts index</a>
             <a href="#" class="btn btn-nesta" id="toggle-6">Reception class obesity level</a>
-            <a href="#" class="btn btn-nesta" id="toggle-7">Show 10 minute walking time</a>
+            <a href="#" class="btn btn-nesta" id="toggle-7">10 mins walk from food support initative</a>
+            <a href="#" class="btn btn-nesta" id="toggle-8">10 mins walk from supermarket</a>
         </div>
         <form>
             <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
@@ -320,7 +321,7 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users']
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'Iso_layer_super', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users']
 
                 /* uncheck the tick box*/
                 $('#normalisation').prop('checked', false);
@@ -854,6 +855,93 @@
                         // close the affordable food initatives geojson
                     })
 
+
+                map.addSource('iso_super', {
+                    type: 'geojson',
+                    data: {
+                        'type': 'FeatureCollection',
+                        'features': []
+                    }
+                });
+
+
+
+                // set up arrays to hold the coordinates
+
+                var arr_super = [];
+
+                // Import the supermarkets data as a geojson - This is a duplicate import. See if this is needed 
+                d3.json(
+                    'Supermarkets_geo.geojson',
+                    function (err, data) {
+                        if (err) throw err;
+
+                        // parse the food affordability coordinates into an array
+
+                        for (var i = 0; i < data.features.length; i++) {
+
+                            var coordinates = data.features[i].geometry.coordinates;
+                            arr_super.push(coordinates)
+                        }
+                        // stick the coordinates of the food banks and the affordable food initatives together
+
+
+                        //Convert the coordinates into API call format
+                        var map_ar = arr_super.map(make_api);
+
+                        // sets up variables
+
+                        var result, results = [], deferred, deferreds = [], map_results = [];
+
+
+                        // 1. Make multiple AJAX calls to the mapbox isochrone api
+
+                        for (i = 0; i < map_ar.length; ++i) {
+
+                            deferred = $.ajax(map_ar[i], {
+                                success: function (result) {
+                                    //   2. Store the results in an array
+                                    results.push(result);
+                                }
+
+                            });
+                            deferreds.push(deferred);
+                        }
+
+                        // wait for the api calls to finish and then apply them to the map
+                        $.when.apply($, deferreds).then(function () {
+                            // 3. Process the result array.
+
+                            for (i = 0; i < results.length; ++i) {
+
+                                map_results.push(results[i].features[0]);
+                            }
+
+                            //apply map_results to the map
+
+                            map.getSource('iso_super').setData({ 'type': 'FeatureCollection', 'features': map_results })
+
+                            map.addLayer(
+                                {
+                                    'id': 'Iso_layer_super',
+                                    'type': 'fill',
+                                    'source': 'iso_super',
+                                    'layout': { 'visibility': 'none' },
+                                    'paint': {
+                                        'fill-color': '#5a3fc0',
+                                        'fill-opacity': 0.3
+                                    }
+                                },
+                                'Food_outlets'
+                            );
+
+
+
+                        })
+
+                        // close the supermarkets import
+                    })
+
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // Sets up the buttons that allow the layers to be selected
                 //////////////////////////////////////////////////////////////////////////////////
@@ -889,6 +977,7 @@
                     , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
                     , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer' }
                     , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
+                    , { 'button_id': 'toggle-8', 'layer_to_link': 'Iso_layer_super' }
                     , { 'button_id': 'toggle-add1', 'layer_to_link': 'Foodbank_users' }
                     , { 'button_id': 'toggle-add2', 'layer_to_link': 'Foodpantry_users' }
 
@@ -1040,7 +1129,7 @@
                             // Extract if the layer is visible
                             var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
 
-                            if (currentState2 == 'visible' & (layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Foodbank_users' || layer_list2[j] !== 'Foodpantry_users')) {
+                            if (currentState2 == 'visible' & ((layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Iso_layer_super') || layer_list2[j] !== 'Foodbank_users' || layer_list2[j] !== 'Foodpantry_users')) {
                                 // Turn off the visiblity of the current layer unless the layer is Iso_layer
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
                                 // Store the name of the layer whose visibility has been turned off
@@ -1050,7 +1139,7 @@
                             }
 
                             // If the layer is not visible do nothing
-                            else if (currentState2 == 'visible' & (layer_list2[j] === 'Iso_layer' || layer_list2[j] === 'Foodbank_users' || layer_list2[j] === 'Foodpantry_users')) {
+                            else if (currentState2 == 'visible' & ((layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Iso_layer_super') || layer_list2[j] === 'Foodbank_users' || layer_list2[j] === 'Foodpantry_users')) {
                                 turned_off = 'none'
 
                             }
