@@ -134,11 +134,14 @@
         <!-- Some of the categories are removed as they seem less relevant to the analysis  -->
         <div id="legend" class="legend" style="display: block">
             <h4>Food supply outlets</h4>
+            <h5>Affordable & emergency food sites </h5>
             <div><span style="background-color: red"></span>Emergency food parcel provider</div>
             <div><span style="background-color: brown"></span>Emergency meal provider</div>
             <div><span style="background-color: #ffff00"></span>Food pantries</div>
             <div><span style="background-color:  blue"></span>Free food initatives</div>
             <div><span style="background-color: #008000"></span>Community cafes</div>
+            <h5>Retail food outlets </h5>
+            <div><span style="background-color: #212F3D"></span>Supermarkets/Hypermarkets</div>
             <div><span style="background-color: #8dd3c7"></span>Restaurants, cafes and canteens</div>
             <!-- <div><span style="background-color: #80b1d3"></span>Mobile caterers</div> -->
             <!-- <div><span style="background-color:  #fdb462"></span>Manufactures packers</div> -->
@@ -147,7 +150,7 @@
             <div><span style="background-color: #fb8072"></span>Pub/bar/nightclub </div>
             <!-- <div><span style="background-color: #80b1d3"></span>Hospitals/Childcare/Caring Premises</div> -->
             <!-- <div><span style="background-color: #fdb462"></span>Schools/colleges/university</div> -->
-            <div><span style="background-color: #212F3D"></span>Supermarkets/Hypermarkets</div>
+
             <!-- <div><span style="background-color: #b3de69"></span>Other catering premises</div> -->
             <!-- <div><span style="background-color: #ccc"></span>Hotel/bed & breakfast/guest house</div> -->
             <!-- <div><span style="background-color: #fdb462"></span>Distributors transporters</div> -->
@@ -156,18 +159,18 @@
         </div>
         <!--The legend for the different values of the layers-->
         <div id="scale-legend" class="scale-legend" style="display: block">
-            <h4>Scale for area information</h4>
+            <h5>Area information scale</h5>
             <div><span style="background-color:#fddbc7"></span>Highest 20%</div>
             <div><span style="background-color: #f7f7f7"></span>80%-60%</div>
             <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
             <div><span style="background-color: #67a9cf"></span>40%-20%</div>
             <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
         </div>
-        <div id="scale-legend2" class="scale-legend2" style="display: block">
-            <h4>Scale for Food bank & pantry usage levels</h4>
-            <div><span style="background-color:#edf8e9"></span>Highest 20%</div>
+        <div id="scale-legend2" class="scale-legend" style="display: block">
+            <h5>Food bank/pantry use scale </h5>
+            <div><span style="background-color :#edf8e9"></span>Highest 20%</div>
             <div><span style="background-color: #bae4b3"></span>80%-60%</div>
-            <div><span style="background-color:#74c476" </span>Middle 20%</div>
+            <div><span style="background-color: #74c476"></span>Middle 20% </div>
             <div><span style="background-color: #31a354"></span>40%-20%</div>
             <div><span style="background-color: #006d2c"></span>Lowest 20%</div>
         </div>
@@ -262,9 +265,9 @@
                 style: 'mapbox://styles/mapbox/basic-v9',
 
                 center: [-2.92413, 53.40938], // The coordinate that the map is centred on
-                minZoom: 0.1,  // The minimum zoom level that the map allows
-                zoom: 10,  // The bigger the zoom number the closer in you 
-                pitch: 40, // the angle of the view
+                minZoom: 2,  // The minimum zoom level that the map allows
+                zoom: 3,  // The bigger the zoom number the closer in you 
+                pitch: 0, // the angle of the view
                 bearing: 0,  // the direction the map view is pointing
                 maxBounds: bounds
             });
