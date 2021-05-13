@@ -394,31 +394,35 @@ Affordable_food_outlets_df['Addresses']=Affordable_food_outlets_df['Address']+" 
 
 Affordable_food_outlets_df['Category'].value_counts()
 
+Affordable_food_outlets_df[Affordable_food_outlets_df['Category']=="Pantry"]
+
+list(Affordable_food_outlets_df)
+
 # +
 # Applies the geocoding function
 
 start_time = time()
-Affordable_food_outlets_df["lat"] , Affordable_food_outlets_df["lon"] = zip(*Affordable_food_outlets_df["Addresses"].apply(long_lat_func))
+
+
+Affordable_food_outlets_df["lat"] , Affordable_food_outlets_df["lon"] = zip(*Affordable_food_outlets_df.apply(lambda x: long_lat_func(x["Addresses"],x["Postcode"]) , axis=1))
 
 time_elapsed= round((time() - start_time)/60,2)
 print("--- %s minutes ---" % (time_elapsed))
 
 # +
 # Subsets to drop the na terms
-Affordable_food_outlets_df=Affordable_food_outlets_df.dropna(subset=['lon', 'lat'])
-Affordable_food_outlets_df=Affordable_food_outlets_df.dropna(subset=['Name'])
-Affordable_food_outlets_df=Affordable_food_outlets_df.dropna(subset=['Address'])
+Affordable_food_outlets_df_clean=Affordable_food_outlets_df.dropna(subset=['lon', 'lat'])
+Affordable_food_outlets_df_clean=Affordable_food_outlets_df_clean.dropna(subset=['Name'])
+Affordable_food_outlets_df_clean=Affordable_food_outlets_df_clean.dropna(subset=['Address'])
 
 #Converts the longitude and latitude as points data to give the geocoordinates for the data frame
-geometry = [Point(xy) for xy in zip(Affordable_food_outlets_df['lon'], Affordable_food_outlets_df['lat'])]
+geometry = [Point(xy) for xy in zip(Affordable_food_outlets_df_clean['lon'], Affordable_food_outlets_df_clean['lat'])]
 
 
 
 # Create a GeoDataFrame from art and verify the type
-Affordable_food_outlets = gpd.GeoDataFrame(Affordable_food_outlets_df, crs = 'epsg:4326' , geometry = geometry)
+Affordable_food_outlets = gpd.GeoDataFrame(Affordable_food_outlets_df_clean, crs = 'epsg:4326' , geometry = geometry)
 # -
-
-Affordable_food_outlets_df
 
 Affordable_food_outlets.plot()
 
@@ -462,26 +466,25 @@ Emergency_food_suppliers['Addresses']=Emergency_food_suppliers['Address']+" "+Em
 Emergency_food_suppliers=Emergency_food_suppliers[Emergency_food_suppliers['Address']!="Mobile "]
 
 start_time = time()
-Emergency_food_suppliers["lat"] , Emergency_food_suppliers["lon"] = zip(*Emergency_food_suppliers["Addresses"].apply(long_lat_func))
 
+Emergency_food_suppliers["lat"] , Emergency_food_suppliers["lon"] = zip(*Emergency_food_suppliers.apply(lambda x: long_lat_func(x["Addresses"],x["Postcode"]) , axis=1))
 time_elapsed= round((time() - start_time)/60,2)
 print("--- %s minutes ---" % (time_elapsed))
 
 # +
-# Subsets to drop the na terms
-Emergency_food_suppliers=Emergency_food_suppliers.dropna(subset=['lon', 'lat'])
-Emergency_food_suppliers=Emergency_food_suppliers.dropna(subset=['lon', 'lat'])
-Emergency_food_suppliers=Emergency_food_suppliers.dropna(subset=['Name'])
-Emergency_food_suppliers=Emergency_food_suppliers.dropna(subset=['Address'])
+# Subsets to drop the na terms for the locations
+Emergency_food_suppliers_clean=Emergency_food_suppliers.dropna(subset=['lon', 'lat'])
 
 #Converts the longitude and latitude as points data to give the geocoordinates for the data frame
-geometry = [Point(xy) for xy in zip(Emergency_food_suppliers['lon'], Emergency_food_suppliers['lat'])]
+geometry = [Point(xy) for xy in zip(Emergency_food_suppliers_clean['lon'], Emergency_food_suppliers_clean['lat'])]
 
 
 
 # Create a GeoDataFrame from the data
-Emergency_food_suppliers= gpd.GeoDataFrame(Emergency_food_suppliers, crs = 'epsg:4326' , geometry = geometry)
+Emergency_food_suppliers= gpd.GeoDataFrame(Emergency_food_suppliers_clean, crs = 'epsg:4326' , geometry = geometry)
 # -
+
+Emergency_food_suppliers_clean
 
 Emergency_food_suppliers.plot()
 
@@ -569,8 +572,6 @@ for measure in measures:
 # Merge with the other ward data, seems simpler to do it this way, but maybe not
 Liverpool_wards=Liverpool_wards.merge(wards_ranked, on='WardCode')
 
-Liverpool_wards
-
 Liverpool_wards.to_file("Data/Out/Liverpool_wards.geojson", driver='GeoJSON')
 
 # # Extracting the Liverpool border area file
@@ -592,79 +593,6 @@ Liverpool_boundary = FeatureCollection(features)
 # Write it out as a geojson, note this may require reformatting to reload into mapbox
 with open('Data/Out/Liverpool_boundary.geojson', 'w') as f:
     dump( Liverpool_boundary, f)
-
-# # Adding in the foodbank information
-
-foodbanks=pd.read_csv("Data/Liverpool_foodbanks_geocode_input.csv")
-
-foodbanks.head(n=3)
-
-
-# +
-# Adjust the coding of the address to make the geocoding more accurate
-
-def complete_address(x):
-  if "Bootle" in x:
-    return x+", Bootle, UK"
-  if "Waterloo" in x:
-    return x+", Waterloo, UK"
-  if "Speke" in x:
-    return x+", Speke, UK"
-  else:
-    return x+", Liverpool, UK"
-
-
-foodbanks["full_address"]=foodbanks["name"].apply(complete_address)
-
-# +
-# Applies the geocoding function
-
-start_time = time()
-
-foodbanks["lat"] , foodbanks["lon"] = zip(*foodbanks["full_address"].apply(long_lat_func))
-
-
-time_elapsed= round((time() - start_time)/60,2)
-print("--- %s minutes ---" % (time_elapsed))
-
-# +
-# Subsets to drop the na terms
-foodbanks=foodbanks.dropna(subset=['lon', 'lat'])
-
-# Foodbanks remove Bootle
-foodbanks=foodbanks[~foodbanks["full_address"].str.contains('Bootle')]
-
-#Converts the longitude and latitude as points data to give the geocoordinates for the data frame
-geometry = [Point(xy) for xy in zip(foodbanks['lon'], foodbanks['lat'])]
-
-
-# Create a GeoDataFrame 
-foodbanks_geo = gpd.GeoDataFrame(foodbanks, crs = 'epsg:4326' , geometry = geometry)
-
-from shapely.ops import cascaded_union
-#Liverpool_boundary = Liverpool_wards.dissolve(by='continent', aggfunc='sum')
-
-
-# +
-# Selects the points that fall within Liverpool
-
-PointInPoly = gpd.sjoin(foodbanks_geo,Liverpool_lsoa, how='left',op='within') 
-
-# +
-# Create a GeoDataFrame from art and verify the type
-foodbanks_geo = gpd.GeoDataFrame(PointInPoly, crs = 'epsg:4326' , geometry = geometry)
-
-
-#map.add_data(data=foodbanks_geo, name="food_banks")
-
-
-
-# -
-
-foodbanks_geo.plot()
-
-foodbanks_geo.to_file("Data/Out/Foodbanks.geojson", driver='GeoJSON')
-
 
 # # Get a bounding box
 
