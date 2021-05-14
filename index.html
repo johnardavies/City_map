@@ -621,6 +621,29 @@
                     //inserted before the food outlets layer
                 }, 'Food_outlets');  // Adds in before the food outlets layer
 
+                // Add in the network of foodbank users
+                map.addSource('Foodbank_network', {
+                    type: 'geojson',
+                    data: 'Foodbank_network.geojson'
+                });
+
+                map.addLayer({
+                    'id': 'Foodbank_network',
+                    'source': 'Foodbank_network',
+                    'type': 'line',
+                    'layout': {
+                        'visibility': 'visible',
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': "#a9a9a9",
+                        'line-width': 2 //The original value was 1
+                    }
+
+                }, 'Food_banks');
+
+
 
 
                 // Add the data for the different layers to the map
