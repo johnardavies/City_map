@@ -127,8 +127,8 @@
         </div>
         <form>
             <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
-            <!--     <label class="checkbox-inline"><input type="checkbox" id='normalisation2' , value='normalise'> Show
-                approximate journey to food bank </label> -->
+            <label class="checkbox-inline"><input type="checkbox" id='network_add' , value='normalise'> Areas in
+                lowest 20% more than 10 minutes away from food support initative </label>
         </form>
     </nav>
 
@@ -323,10 +323,11 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'Iso_layer_super', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users']
+                var layer_list = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Obesity_layer', 'Overcrowding_layer', 'Iso_layer', 'Iso_layer_super', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users', 'Foodbank_network']
 
-                /* uncheck the tick box*/
+                /* unchecks the two tick boxes*/
                 $('#normalisation').prop('checked', false);
+                $('#network_add').prop('checked', false);
 
                 // This changes the layer that is shown on the map. 
                 // It loops through all the layers makes the selected area layer button visible and the others invisible
@@ -349,9 +350,6 @@
                     }
                 }
             }
-
-
-            // This unchecks the tick box
 
 
 
@@ -620,6 +618,30 @@
                     }
                     //inserted before the food outlets layer
                 }, 'Food_outlets');  // Adds in before the food outlets layer
+
+                // Add in the network of foodbank users
+                map.addSource('Foodbank_network', {
+                    type: 'geojson',
+                    data: 'Foodbank_network.geojson'
+                });
+
+                map.addLayer({
+                    'id': 'Foodbank_network',
+                    'source': 'Foodbank_network',
+                    'type': 'line',
+                    'layout': {
+                        'visibility': 'none',
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': "#333333",
+                        'line-width': 1,
+                        'line-opacity': 0.5
+                    }
+
+                }, 'Food_banks');
+
 
 
 
@@ -1171,6 +1193,56 @@
 
 
                 });
+
+
+                $('#network_add').on('change', function () {
+
+                    // Applies if the checkbox is checked
+                    if ($(this)[0].checked === true) {
+                        //  The layers we apply the network too
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users', 'Foodbank_network']
+
+                        // Loops through these layers
+                        for (var j = 0; j < layer_list2.length; j++) {
+                            // Extract if the layer is visible
+                            var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
+
+                            if (currentState2 == 'visible' & (layer_list2[j] == 'Foodbank_users')) {
+                                // Turn on the visibility of the network layer
+                                map.setLayoutProperty('Foodbank_network', 'visibility', 'visible');
+                                // Store the name of the layer whose visibility has been turned off
+                                turned_on = 'Foodbank_network';
+                                // Select the corresponding distance layer and make it visible
+
+                            }
+
+                            // If the layer is not visible do nothing
+                            else if (currentState2 == 'visible' & (layer_list2[j] !== 'Foodbank_users')) {
+                                turned_on = 'none'
+
+                            }
+
+                            // If the layer is set to none do nothing
+                            else if (currentState2 == 'none') {
+                                map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
+
+                            }
+                        }
+
+                    }
+                    // If the layer is unchecked turn off the network layer
+                    else if ($(this)[0].checked === false && turned_on !== 'none') {
+                        // Turn off the 
+                        map.setLayoutProperty('Foodbank_network', 'visibility', 'none')
+                        // Turn off the distance layer        
+
+                        turned_on == 'none'
+                    }
+
+
+                });
+
+
 
 
 
