@@ -95,24 +95,34 @@
     <!-- The buttons that selects the different layers -->
     <nav id="menu">
         <div class="layer_button" id="buttons">
-            <a href="#" class="btn btn-nesta" id="toggle-0">Population levels</a>
-            <a href="#" class="btn btn-nesta" id="toggle-1">Income levels</a>
-            <a href="#" class="btn btn-nesta" id="toggle-2">Morbidity levels</a>
-            <a href="#" class="btn btn-nesta" id="toggle-3">Household overcrowding</a>
-            <a href="#" class="btn btn-nesta" id="toggle-4">Education post 16</a>
-            <a href="#" class="btn btn-nesta" id="toggle-5">E-food deserts index</a>
-            <a href="#" class="btn btn-nesta" id="toggle-6">Reception class obesity level</a>
-            <a href="#" class="btn btn-nesta" id="toggle-7">10 mins walk from food support initative</a>
-            <a href="#" class="btn btn-nesta" id="toggle-8">10 mins walk from supermarket</a>
-        </div>
-        <form>
-            <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
-            <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas in
-                lowest 20% more than 10 minutes away </label>
-        </form>
-        <div class="layer_button" id="buttons">
-            <a href="#" class="btn btn-nesta" id="toggle-add1">Food bank voucher users</a>
-            <a href="#" class="btn btn-nesta" id="toggle-add2">Food pantry members</a>
+            <div>
+                <h5> Area information</h5>
+            </div>
+            <a href="#" class="btn-nesta" id="toggle-0">Population levels</a>
+            <a href="#" class="btn-nesta" id="toggle-1">Income levels</a>
+            <a href="#" class="btn-nesta" id="toggle-2">Morbidity levels</a>
+            <a href="#" class="btn-nesta" id="toggle-3">Household overcrowding</a>
+            <a href="#" class="btn-nesta" id="toggle-4">Education post 16</a>
+            <a href="#" class="btn-nesta" id="toggle-5">E-food deserts index</a>
+            <a href="#" class="btn-nesta" id="toggle-6">Reception class obesity level</a>
+            <div>
+                <h5> Accessibility by foot</h5>
+            </div>
+            <a href="#" class="btn-nesta" id="toggle-7">10 mins walk from food support initative</a>
+            <form>
+                <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
+                <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas in
+                    lowest 20% more than 10 minutes away from food support initative </label>
+            </form>
+            <a href="#" class="btn-nesta" id="toggle-8">10 mins walk from supermarket</a>
+            <!--   </div> -->
+
+            <!--  <div class="layer_button" id="buttons"> -->
+            <div>
+                <h5>Food bank and pantry users</h5>
+            </div>
+            <a href="#" class="btn-nesta" id="toggle-add1">Food bank voucher users</a>
+            <a href="#" class="btn-nesta" id="toggle-add2">Food pantry members</a>
 
         </div>
         <form>
@@ -160,7 +170,9 @@
         </div>
         <!--The legend for the different values of the layers-->
         <div id="scale-legend" class="scale-legend" style="display: block">
-            <h5>Area information scale</h5>
+            <div>
+                <h5>Area information scale</h5>
+            </div>
             <div><span style="background-color:#fddbc7"></span>Highest 20%</div>
             <div><span style="background-color: #f7f7f7"></span>80%-60%</div>
             <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
@@ -203,6 +215,7 @@
                 // { offset: '<NA>', color: "#FF2166ac" }
             ]
 
+            // Reverses this colour scheme for the obesity layer
             var growthColorStops_reverse = [
                 { offset: 1, color: "#2166ac" },
                 { offset: 2, color: "#67a9cf" },
@@ -211,6 +224,7 @@
                 { offset: 5, color: "#fddbc7" },
             ]
 
+            // The colour scheme for the food bank and pantry users layer
             var growthColorStops_users = [
                 { offset: 1, color: "#edf8e9" },
                 { offset: 2, color: "#bae4b3" },
@@ -285,14 +299,15 @@
 
             // This code changes the colour of the layer button that has been selected so it is clear which
             // layer has been selected
-            $(".layer_button a").click(function (e) {
+            // The dot selects all the .btn-nesta class
+            $(".btn-nesta").click(function (e) {
                 // Changes the button to show it has been selected
                 $(this).css("background", "#da4156");
                 $(this).css("color", "#ffffff");
 
-                /* Sets the layer that wasn't just selected back to previous formatting */
-                $(this).siblings().css("background", "#74b1e4");
-                $(this).siblings().css("color", "#070707");
+                /* Sets the layer that wasn't just selected back to previous formatting Only does it for the siblings that are class btn-nesta*/
+                $(this).siblings(".btn-nesta").css("background", "#74b1e4");
+                $(this).siblings(".btn-nesta").css("color", "#070707");
                 $(this).stopPropagation()
             });
 
@@ -302,19 +317,6 @@
             // Function that makes sure only one layer shows at one time.
 
 
-            // This code changes the colour of the layer button that has been selected
-            $(".layer_button a").click(function (e) {
-
-                $(this).css("background", "#da4156");
-                $(this).css("color", "#ffffff");
-
-                /* Sets the layer that wasn't just selected back to previous formatting */
-                $(this).siblings().css("background", "#74b1e4");
-                $(this).siblings().css("color", "#070707");
-                $(this).stopPropagation()
-
-
-            });
 
 
 
@@ -637,7 +639,8 @@
                         'paint': {
                             'fill-color': {
                                 property: y,
-                                stops: colorDictList2Array(growthColorStops),  // Function that colours the layers according to quintile
+                                stops: colorDictList2Array(growthColorStops),  // Function that colours the layers according to quintile 
+                                // growthColorStops defined before the map load
                             }, 'fill-opacity': 0.7
                         }
 
@@ -747,6 +750,7 @@
                 // The isochrone layer created by calling the mapbox API
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                // Sets up an empty base layer
                 map.addSource('iso', {
                     type: 'geojson',
                     data: {
@@ -865,7 +869,7 @@
                 });
 
 
-
+                // Generates the travel time layer for the supermarkets
                 // set up arrays to hold the coordinates
 
                 var arr_super = [];
@@ -1123,13 +1127,15 @@
                     // Applies if the checkbox is checked
                     if ($(this)[0].checked === true) {
                         //  The layers we will apply the distance subset to
-                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer', 'Foodbank_users', 'Foodpantry_users']
+                        var layer_list2 = ['Population_layer', 'Income_layer', 'Morbidity_layer', 'Education_layer', 'Foodaccess_layer', 'Overcrowding_layer', 'Obesity_layer', 'Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users']
+                        // layers not to adjust the formatting of if the checkbox is clicked
+                        var layer_skip = ['Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users']
                         // Loops through these layers
                         for (var j = 0; j < layer_list2.length; j++) {
                             // Extract if the layer is visible
                             var currentState2 = map.getLayoutProperty(layer_list2[j], 'visibility');
-
-                            if (currentState2 == 'visible' & ((layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Iso_layer_super') || layer_list2[j] !== 'Foodbank_users' || layer_list2[j] !== 'Foodpantry_users')) {
+                            // || (layer_list2[j] !== 'Iso_layer_super') || (layer_list2[j] !== 'Foodbank_users') || (layer_list2[j] !== 'Foodpantry_users')
+                            if (currentState2 == 'visible' & (layer_skip.includes(layer_list2[j]) == false)) {
                                 // Turn off the visiblity of the current layer unless the layer is Iso_layer
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
                                 // Store the name of the layer whose visibility has been turned off
@@ -1139,13 +1145,14 @@
                             }
 
                             // If the layer is not visible do nothing
-                            else if (currentState2 == 'visible' & ((layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Iso_layer_super') || layer_list2[j] === 'Foodbank_users' || layer_list2[j] === 'Foodpantry_users')) {
+                            else if (currentState2 != 'visible') {
+                                // & ((layer_list2[j] !== 'Iso_layer' || layer_list2[j] !== 'Iso_layer_super') || layer_list2[j] === 'Foodbank_users' || layer_list2[j] === 'Foodpantry_users')) {
                                 turned_off = 'none'
 
                             }
 
 
-                            // If the layer is not visible do nothing
+                            // If the layer is set to none do nothing
                             else if (currentState2 == 'none') {
                                 map.setLayoutProperty(layer_list2[j], 'visibility', 'none');
 

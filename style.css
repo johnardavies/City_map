@@ -14,6 +14,8 @@ h1 {
 
 }
 
+
+
 svg {
   fill: currentColor;
 }
@@ -172,6 +174,10 @@ div#blur {
 #menu a:hover {
   background-color: #f0eeee; /* The colour of the buttons when there is a mouse over */
   color: #404040; /* The colour of the text when there is a mouse over */
+}
+
+.menu h3 {
+  text-align: center;
 }
 
 /*
