@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-assembly/{ASSEMBLY}}/assembly.js"></script>
 
@@ -98,13 +99,19 @@
             <div>
                 <h5> Area information</h5>
             </div>
-            <a href="#" class="btn-nesta" id="toggle-0">Population levels</a>
+            <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+                title="Population score from index of multiple deprivation" id="toggle-0">Population
+                levels</a>
             <a href="#" class="btn-nesta" id="toggle-1">Income levels</a>
-            <a href="#" class="btn-nesta" id="toggle-2">Morbidity levels</a>
+            <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+                title="Morbidity score from index of multiple deprivation" id="toggle-2">Morbidity levels</a>
             <a href="#" class="btn-nesta" id="toggle-3">Household overcrowding</a>
             <a href="#" class="btn-nesta" id="toggle-4">Education post 16</a>
             <a href="#" class="btn-nesta" id="toggle-5">E-food deserts index</a>
-            <a href="#" class="btn-nesta" id="toggle-6">Reception class obesity level</a>
+            <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+                title="Reception class obesity score from Liverpool local authority data" id="toggle-6">Reception class
+                obesity
+                level</a>
             <div>
                 <h5> Accessibility by foot</h5>
             </div>
@@ -194,6 +201,11 @@
 
             // The mapbox token 
             mapboxgl.accessToken = 'pk.eyJ1Ijoiam9obmFyZGF2aWVzIiwiYSI6ImNpeHRmZjhlYjAwMmUycW9qbHRvem0xa3gifQ.oQ9cnn8b5HATalxv9rppYg';
+
+            // Enables the pop up hover functionality on the buttons
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
 
             // The function to colour the map layers
             function colorDictList2Array(colorDictList) {
@@ -308,7 +320,7 @@
                 $(this).css("color", "#ffffff");
 
                 /* Sets the layer that wasn't just selected back to previous formatting Only does it for the siblings that are class btn-nesta*/
-                $(this).siblings(".btn-nesta").css("background", "#74b1e4");
+                $(this).siblings(".btn-nesta").css("background", "#c1dcf2");
                 $(this).siblings(".btn-nesta").css("color", "#070707");
                 $(this).stopPropagation()
             });
@@ -631,15 +643,19 @@
                     'id': 'Foodbank_network',
                     'source': 'Foodbank_network',
                     'type': 'line',
+                    'filter': ["any",
+                        // 
+                        ['>', 'count', 10]
+                    ],
                     'layout': {
                         'visibility': 'none',
                         'line-join': 'round',
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': "#333333",
+                        'line-color': "#331800",
                         'line-width': 1,
-                        'line-opacity': 0.5
+                        'line-opacity': 0.1
                     }
 
                 }, 'Food_banks');
