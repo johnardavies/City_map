@@ -150,6 +150,8 @@ Liverpool_lsoa_extra[venue_counts]=Liverpool_lsoa_extra[venue_counts].fillna(0)
 
 Liverpool_lsoa_extra['area'] = Liverpool_lsoa_extra.geometry.area
 
+Liverpool_lsoa_extra
+
 for elem in venue_counts:
     Liverpool_lsoa_extra[elem+"_density"]= Liverpool_lsoa_extra[elem]/Liverpool_lsoa_extra['area']
 
@@ -180,6 +182,19 @@ matrix = np.triu(results, k=0)
 fig, ax = plt.subplots(figsize=(12,12))  
 sns.heatmap(results, annot=True,ax=ax, mask=matrix,  cmap ='RdBu_r', vmax=0.5, square=True, cbar=False)
 ax.set_title('Correlation between different activities')
+
+# +
+from matplotlib import pyplot as plt
+
+axes = pd.plotting.scatter_matrix(correlogram_data, alpha=0.2, figsize=(12,12))
+for ax in axes.flatten():
+    ax.xaxis.label.set_rotation(90)
+    ax.yaxis.label.set_rotation(0)
+    ax.yaxis.label.set_ha('right')
+
+plt.tight_layout()
+plt.gcf().subplots_adjust(wspace=0, hspace=0)
+plt.show()
 # -
 
 
