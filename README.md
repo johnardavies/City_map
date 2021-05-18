@@ -31,7 +31,7 @@ This has been obtained from Liverpool good food plan team. The original file is 
 This is created by calling the [MapboxGL isochrone API](https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/) to calculate a 10 minutes walking isochrone. These are produced by using jQuery AJAX in the map's javascript to make API  calls for respectively the coordinates of the  food support initatives (Emergency food and affordable food initatives)and for the supermarkets, creating two sets of isochrone layers one for the food support initatives and one for the supermarkets. In principle these calls can be made separately, stored and then imported as static layers
 
 ***5. The reception class obesity layer at the ward level*** \
-This data has been obtained from Liverpool council
+This data has been obtained from Liverpool council. It is included in the ***Liverpool_wards.geojson*** as it is at ward level.
 
 ***6. The e-food deserts index layer*** \
 This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
