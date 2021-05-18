@@ -12,12 +12,12 @@ https://johnardavies.github.io/City_map/#
 ***1. The general food outlet information*** \
 This is obtained by geocoding the list of Liverpool food outlets on the [Food Standards Agency website](https://ratings.food.gov.uk/default/en-GB)\
 
-For the purposes of the map food outlets that are wholesale or not normal consumer retail are present in the ***Food_outlets_geo.geojson***, but are filtered out in the map. These being outlets of the type: 
+For the purposes of the map food outlets that are wholesale or not normal consumer retail are present in the ***Food_outlets_geo.geojson***, but are filtered out in the map's javascript. These being outlets of the type: 
 ```
 'Mobile caterer','Distributors/Transporters', 'Manufacturers/packers', 'Hospitals/Childcare/Caring Premises','School/college/university','Other catering premises','Hotel/bed & breakfast/guest house'
 ```
 
-Due to supermakets being a separate layer in the map they are included in ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
+Supermarkets are included as a separate layer in the map they are included in ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
 
 ***2. The affordable food initatives (Food pantries, Free food initatives, Community cafes  information*** \
 This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
