@@ -16,7 +16,7 @@ For the purposes of the map food outlets that are wholesale or not normal consum
 'Mobile caterer','Distributors/Transporters', 'Manufacturers/packers', 'Hospitals/Childcare/Caring Premises','School/college/university','Other catering premises','Hotel/bed & breakfast/guest house'
 ```
 
-Due to supermakets being a separate layer in the map they are included in Supermarkets_geo.geojson. This layer is created with the Liverpool_map.ipynb notebook
+Due to supermakets being a separate layer in the map they are included in ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
 
 ***2. The affordable food initatives (Food pantries, Free food initatives, Community cafes  information*** \
 This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
@@ -54,11 +54,16 @@ This is taken from the [index of multiple deprivation](https://data-communities.
 
 ## The data processing that is used to generate the map layers
 
-The processing of the food standards agency and Food banks data is done using the notebooks:\
+The processing of the data in the map is done using the notebooks:\
 
-**1. Liverpool_map.ipynb** This generates the geojson files for the layers (isochrone layer excepted) and the food outlet sites\
-**2. Further_analysis.ipynb** This generates geojson for areas that are in the lowest 20% of layers data and more than 10 mins from an affordable food outlet \
-**3. The generation of the network layers that shows links between foodbanks and postcodes** This is done using a third notebook. It is currently  private due to this data not being public
+**1. Liverpool_map.ipynb** \
+This generates the geojson files for the layers (isochrone layers and the two layers triggered by the checkboxes excepted) and the food outlet sites 
+
+**2. Further_analysis.ipynb** \
+This generates geojson for areas that are in the lowest 20% of layers data and more than 10 mins from an affordable food outlet 
+
+**3. The generation of the network layers that shows links between foodbanks and postcodes** \
+This is done using a third notebook. It is currently  private due to this data not being public
 
 The first two notebooks are run in sequence (**Further_analysis.ipynb** depends on the outputs of **Liverpool_map.ipynb**) within a container using the Dockerfile in the map_data_processing folder which also contains the data in the Data folder.
 
