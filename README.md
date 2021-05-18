@@ -1,11 +1,11 @@
 # This is a mapboxGL map of the city of Liverpool 
-# (The map is work in progress)
+***The map is work in progress***
 
 The map itself is visible at:
 https://johnardavies.github.io/City_map/#
 
 
-## The data that the map is based on:
+## A. The data that the map is based on:
 
 ### The data on the locations of food outlets, emergency and affordable food initatives
 
@@ -53,7 +53,7 @@ This is created using a separate notebook as the data used to produce it is not 
 This is taken from the [index of multiple deprivation](https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0) It is included in the ***Liverpool_lsoa.geojson***.
 
 
-## The data processing that is used to generate the map layers
+## B. The data processing that is used to generate the map layers
 
 The processing of the data in the map is done using the notebooks which are run in a Docker container:
 
@@ -66,7 +66,7 @@ This generates geojson for areas that are in the lowest 20% of layers data and m
 **3. The generation of the network layers that shows links between foodbanks and postcodes** \
 This is done using a third notebook. It is currently  private due to this data not being public
 
-The first two notebooks are run in sequence (**Further_analysis.ipynb** depends on the outputs of **Liverpool_map.ipynb**) within a container using the Dockerfile in the map_data_processing folder which also contains the data in the Data folder.
+The first two notebooks are run in sequence (**Further_analysis.ipynb** depends on the outputs of **Liverpool_map.ipynb**) within a container using the Dockerfile in the **map_data_processing** folder which also contains the data in the **Data** folder.
 
 They process the data which is in the ***Data*** folder inside ***map_data_processing*** folder and then output the files which the map uses to the ***Out*** folder 
 
@@ -83,7 +83,7 @@ To download the processed files for the map from the Out folder in the container
 $ docker cp container_id:/notebooks/Data/Out Destination_location
 ```
 
-## Viewing the map locally
+## C. Viewing the map locally
 
 To run the map locally
 ```
