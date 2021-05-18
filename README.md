@@ -1,4 +1,5 @@
-# This is a mapboxGL map of the city of Liverpool (The map is work in progress)
+# This is a mapboxGL map of the city of Liverpool 
+# (The map is work in progress)
 
 The map itself is visible at:
 https://johnardavies.github.io/City_map/#
@@ -20,7 +21,7 @@ Due to supermakets being a separate layer in the map they are included in ***Sup
 
 ***2. The affordable food initatives (Food pantries, Free food initatives, Community cafes  information*** \
 This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
-The original excel file is Affordable_food_inititives_Liverpool.xlsx which is processed with the **Liverpool_map.ipynb** notebook to produce the ***Affordable_food_initatives.geojson***
+The original excel file is ***Affordable_food_inititives_Liverpool.xlsx*** which is processed with the **Liverpool_map.ipynb** notebook to produce the ***Affordable_food_initatives.geojson***
 
 ***3. The emergency food initatives (Emergency food parcel providers and Emergency meal providers)*** \
 This has been obtained from Liverpool good food plan team. The original file is ***emergency_food_providers.xlsx*** which is processed with the ***Liverpool_map.ipynb*** notebook to produce the ***Emergency_food_suppliers.geojson***
@@ -54,7 +55,7 @@ This is taken from the [index of multiple deprivation](https://data-communities.
 
 ## The data processing that is used to generate the map layers
 
-The processing of the data in the map is done using the notebooks:\
+The processing of the data in the map is done using the notebooks which are run in a Docker container:
 
 **1. Liverpool_map.ipynb** \
 This generates the geojson files for the layers (isochrone layers and the two layers triggered by the checkboxes excepted) and the food outlet sites 
@@ -67,7 +68,7 @@ This is done using a third notebook. It is currently  private due to this data n
 
 The first two notebooks are run in sequence (**Further_analysis.ipynb** depends on the outputs of **Liverpool_map.ipynb**) within a container using the Dockerfile in the map_data_processing folder which also contains the data in the Data folder.
 
-They process the data which is in the ***Data*** folder inside map_data_processing and then output the files which the map uses to the ***Out*** folder 
+They process the data which is in the ***Data*** folder inside ***map_data_processing*** folder and then output the files which the map uses to the ***Out*** folder 
 
 To build the container image for the data processing after cloning the repo, tagging it as map_processing
 ```
