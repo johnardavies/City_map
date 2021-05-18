@@ -67,7 +67,7 @@ This is done using a third notebook. It is currently  private due to this data n
 
 The first two notebooks are run in sequence (**Further_analysis.ipynb** depends on the outputs of **Liverpool_map.ipynb**) within a container using the Dockerfile in the map_data_processing folder which also contains the data in the Data folder.
 
-They process the data and then output the files to the Out folder 
+They process the data which is in the ***Data*** folder inside map_data_processing and then output the files which the map uses to the ***Out*** folder 
 
 To build the container image for the data processing after cloning the repo, tagging it as map_processing
 ```
