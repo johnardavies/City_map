@@ -52,8 +52,7 @@ This is created using a separate notebook as the data used to produce it is not 
 
 
 ***10. All other layer data*** \
-This is taken from the [index of multiple deprivation](https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0) It is included in the ***Liverpool_lsoa.geojson***.
-
+This is taken from the [2019 index of multiple deprivation accessed on the ONS website](https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019) on 19/05/21. The data is File 6: population denominators (saved in the **Data** folder of **map_data_processing** as **File_6_-_IoD2019_Population_Denominators.xlsx'**) and File 8: underlying indicators (saved in the data folder as **File_8_-_IoD2019_Underlying_Indicators.xlsx**). These files are processed with ***Liverpool_map.ipynb*** to produce the ***Liverpool_lsoa.geojson*** which the map imports.
 
 ## B. The data processing that is used to generate the map layers
 
