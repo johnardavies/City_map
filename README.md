@@ -9,7 +9,7 @@ https://johnardavies.github.io/City_map/#
 
 ### The data on the locations of food outlets, emergency and affordable food initatives
 
-***1. The general food outlet information*** \
+***1. The general food outlet information*** 
 This is obtained by geocoding the list of Liverpool food outlets on the [Food Standards Agency website](https://ratings.food.gov.uk/default/en-GB)\
 
 For the purposes of the map food outlets that are wholesale or not normal consumer retail are present in the ***Food_outlets_geo.geojson***, but are filtered out in the map's javascript. These being outlets of the type: 
@@ -17,30 +17,31 @@ For the purposes of the map food outlets that are wholesale or not normal consum
 'Mobile caterer','Distributors/Transporters', 'Manufacturers/packers', 'Hospitals/Childcare/Caring Premises','School/college/university','Other catering premises','Hotel/bed & breakfast/guest house'
 ```
 
-Supermarkets are included as a separate layer in the map they are included in ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
+Supermarkets are included as a separate layer as ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
 
 ***2. The affordable food initatives (Food pantries, Free food initatives, Community cafes  information*** \
 This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
 The original excel file is ***Affordable_food_inititives_Liverpool.xlsx*** which is processed with the **Liverpool_map.ipynb** notebook to produce the ***Affordable_food_initatives.geojson***
 
 ***3. The emergency food initatives (Emergency food parcel providers and Emergency meal providers)*** \
-This has been obtained from Liverpool good food plan team. The original file is ***emergency_food_providers.xlsx*** which is processed with the ***Liverpool_map.ipynb*** notebook to produce the ***Emergency_food_suppliers.geojson***
+This has been obtained from Liverpool good food plan team. The original file is ***emergency_food_providers.xlsx*** which is processed with the ***Liverpool_map.ipynb*** notebook to produce the ***Emergency_food_suppliers.geojson*** which is read in by the map
 
 ### The area information which is imported or derived
 
 ***4. The walking distance layer*** \
-This is created by calling the [MapboxGL isochrone API](https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/) to calculate a 10 minutes walking isochrone. These are produced by using jQuery AJAX in the map's javascript to make API  calls for respectively the coordinates of the  food support initatives (Emergency food and affordable food initatives)and for the supermarkets, creating two sets of isochrone layers one for the food support initatives and one for the supermarkets. In principle these calls can be made separately, stored and then imported as static layers
+This is created by calling the [MapboxGL isochrone API](https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/) to calculate a 10 minutes walking isochrone. These are produced by using jQuery AJAX in the map's javascript to make API  calls for respectively the coordinates of the  food support initatives (Emergency food and affordable food initatives) and for the supermarkets, creating two sets of isochrone layers that are made visible to clicking the buttons. In principle these calls can be made separately, stored and then imported as static layers rather than using API calls.
 
 ***5. The reception class obesity layer at the ward level*** \
 This data has been obtained from Liverpool council. It is included in the ***Liverpool_wards.geojson*** as it is at ward level.
+There is other information at ward level and which is imported in the javascript, but it is the obesity layer which is shown in the map.
 
 ***6. The e-food deserts index layer*** \
 This is an index measuring the degree to which areas have characteristics associated with food deserts. The index is produced by
 CDRC and was obtained from their [website](https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities)
 It is included in the ***Liverpool_lsoa.geojson***
 
-***7. The layers showing areas scoring in the bottom 20% and more than 10 minutes from either an emergency or an affordable food initative (These are shown by clicking the top checkbox)*** \These are produced using the Further_analysis.ipynb notebook. There is a geojson for each layer above the checkbox.
-The layers are ```income.geojson, population.geojson, education.geojson, morbidity.geojson, obesity.geojson, crowding.geojson, score.geojson.``` The last two being for the household overcrowding and e-food index respectively
+***7. The layers showing areas scoring in the bottom 20% and more than 10 minutes from either an emergency or an affordable food initative (These are shown by clicking the top checkbox)*** \These are produced using the Further_analysis.ipynb notebook. There is a geojson for each layer above the checkbox (With the exception of the travel time layers).
+The layers are ```income.geojson, population.geojson, education.geojson, morbidity.geojson, obesity.geojson, crowding.geojson, score.geojson.``` The last two being for the household overcrowding and e-food index respectively.
 
 ***8. The layers showing the levels of Food bank and pantry usage*** \
 These are produced in a separate analysis which is private owing to the data that it includes. The geojson that produces these at 3-4 digit postcode level is ***Foodbank_pantry_use.geojson***
