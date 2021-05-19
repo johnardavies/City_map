@@ -20,7 +20,7 @@ For the purposes of the map food outlets that are wholesale or not normal consum
 Supermarkets are included as a separate layer as ***Supermarkets_geo.geojson***. This layer is created with the ***Liverpool_map.ipynb*** notebook
 
 ***2. The affordable food initatives (Food pantries, Free food initatives, Community cafes  information*** \
-This has been obtained from the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
+This has been obtained from the Liverpool good food plan team, it was originally collected to feed into the [Feeding Liverpool map](http://www.feedingliverpool.org/resources)\
 The original excel file is ***Affordable_food_inititives_Liverpool.xlsx*** which is processed with the **Liverpool_map.ipynb** notebook to produce the ***Affordable_food_initatives.geojson***
 
 ***3. The emergency food initatives (Emergency food parcel providers and Emergency meal providers)*** \
