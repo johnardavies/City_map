@@ -11,6 +11,7 @@ https://johnardavies.github.io/City_map/#
 
 ***1. The general food outlet information*** 
 This is obtained by geocoding the list of Liverpool food outlets on the [Food Standards Agency website](https://ratings.food.gov.uk/default/en-GB)\
+The original xml is ***Liverpool_food_outlets.xml*** which is in the ***Data*** folder inside the ***map_data_processsing*** folder processed usimg the the **Liverpool_map.ipynb** notebook.
 
 For the purposes of the map food outlets that are wholesale or not normal consumer retail are present in the ***Food_outlets_geo.geojson***, but are filtered out in the map's javascript. These being outlets of the type: 
 ```
