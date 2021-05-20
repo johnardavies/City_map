@@ -182,19 +182,19 @@
             <div>
                 <h5>Area information scale</h5>
             </div>
-            <div><span style="background-color:#fddbc7"></span>Highest 20%</div>
-            <div><span style="background-color: #f7f7f7"></span>80%-60%</div>
+            <div><span style="background-color:#fddbc7"></span>Lowest 20%</div>
+            <div><span style="background-color: #f7f7f7"></span>20%-40%</div>
             <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
-            <div><span style="background-color: #67a9cf"></span>40%-20%</div>
-            <div><span style="background-color: #2166ac"></span>Lowest 20%</div>
+            <div><span style="background-color: #67a9cf"></span>60%-80%</div>
+            <div><span style="background-color: #2166ac"></span>Highest 20%</div>
         </div>
         <div id="scale-legend2" class="scale-legend" style="display: block">
             <h5>Food bank/pantry use scale </h5>
-            <div><span style="background-color :#edf8e9"></span>Highest 20%</div>
-            <div><span style="background-color: #bae4b3"></span>80%-60%</div>
+            <div><span style="background-color :#edf8e9"></span>Lowest 20%</div>
+            <div><span style="background-color: #bae4b3"></span>20%-40%</div>
             <div><span style="background-color: #74c476"></span>Middle 20% </div>
-            <div><span style="background-color: #31a354"></span>40%-20%</div>
-            <div><span style="background-color: #006d2c"></span>Lowest 20%</div>
+            <div><span style="background-color: #31a354"></span>60%-80%</div>
+            <div><span style="background-color: #006d2c"></span>Highest 20%</div>
         </div>
 
         <script>
@@ -229,14 +229,7 @@
                 // { offset: '<NA>', color: "#FF2166ac" }
             ]
 
-            // Reverses this colour scheme for the obesity layer
-            var growthColorStops_reverse = [
-                { offset: 1, color: "#2166ac" },
-                { offset: 2, color: "#67a9cf" },
-                { offset: 3, color: "#d1e5f0" },
-                { offset: 4, color: "#f7f7f7" },
-                { offset: 5, color: "#fddbc7" },
-            ]
+
 
             // The colour scheme for the food bank and pantry users layer
             var growthColorStops_users = [
@@ -594,7 +587,7 @@
                     'paint': {
                         'fill-color': {
                             property: 'Ward_Reception_Overweight_Obese_rank',
-                            stops: colorDictList2Array(growthColorStops_reverse),
+                            stops: colorDictList2Array(growthColorStops),
                         }, 'fill-opacity': 0.7
                     }
 
