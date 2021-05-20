@@ -33,37 +33,136 @@ import xml.etree.ElementTree as ET
 import requests
 
 import re
-
+import time
 from time import time
 # -
 
-# This map reads in data on (from the Data folder)
-# 1. Lower super output areas and the index of multiple deprivation
-# 2. Food outlets data
-# 3. The location of foodbanks
-# 4. Ward area data of Liverpool and associated data
+# This map reads in data on (from the Data folder):
+#  
+# Area data
+# 1. Lower super output areas (lsoas) and the index of multiple deprivation and population data
+# 2. Ward area data of Liverpool and associated data
 #
-# and processes it 
-# - geocoding of point data - of food banks and food outlets 
-# - matches the ward area data to the ward shape files
-# - Converts the layer data (lsoas and wards) into qunitiles
+# Points data
+# 3. Food outlets data
+# 4. The affordable and emergency food outlet data
 #
 #
-# and writes it out as four geojson files to the Out folder in the Data folder
+# and processes it:
+#     
+# - Takes the area data for lsoas and ward, converts to geojson and ranks it into quintiles
+# - Outputs a Liverpool border geojson
+# - Geocodes the points data and outputs as geojson
+#
+#
+#
 
-# # Reads in the Liverpool Lower Super Output Areas (lsoas) with index of multiple deprivation and creates quintile variables
+# +
+# Function to extract ward boundaries from API
+URL = "http://statistics.data.gov.uk/resource.json?uri=http%3A%2F%2Fstatistics.data.gov.uk%2Fid%2Fstatistical-geography%2F{code}%2Fgeometry"
 
+# Function to call the API with the geography codes and return the shape files using the API
+def get_shape(gss_code):
+    return requests.get(URL.format(code=gss_code)).json()
+
+
+# -
+
+# # Area data: Reads in the index of multiple deprivation data at Lower Super output Areas (LSOAs) adds geographies quintiles variables and write out as csv
+
+# +
+#Reads in the spreadsheet of the index of multiple deprivation
+#index_mult_dep = pd.read_excel('Data/File_8_-_IoD2019_Underlying_Indicators.xlsx')
+
+index_mult_dep=pd.ExcelFile('Data/File_8_-_IoD2019_Underlying_Indicators.xlsx')
+
+# Convert the sheet names to a list
+sheet_names_list=index_mult_dep.sheet_names
+
+# Removes the Notes pages as it isn't data 
+sheet_names_list.remove('Notes')
+
+sheet_names_list
+# -
+
+# Merges the different excel sheets so that we have one dataframe of lower super output area data
+for i, index_var in enumerate(sheet_names_list):
+    if i==0:
+        Indexmult_lsoa=pd.read_excel(index_mult_dep ,index_var )
+    else:
+        Indexmult_lsoa=pd.merge(Indexmult_lsoa, pd.read_excel(index_mult_dep ,index_var ),  how='inner', on=["LSOA code (2011)","LSOA name (2011)", "Local Authority District code (2019)", "Local Authority District name (2019)"] )
+
+
+# +
+# Reads in the index of multiple deprivation population data
+Population_file=pd.ExcelFile('Data/File_6_-_IoD2019_Population_Denominators.xlsx')
+Population_data=pd.read_excel(Population_file,'Population Denominators')
+
+# Merges with the index of multiple deprivation
+Indexmult_lsoa=pd.merge(Indexmult_lsoa , Population_data,   how='inner', on=["LSOA code (2011)","LSOA name (2011)", "Local Authority District code (2019)", "Local Authority District name (2019)"])
+# -
+
+list(Population_data)
+
+# +
+# Identifies columns that don't have Unnamed in the title
+cols = [c for c in Indexmult_lsoa.columns if ("Unnamed:" not in c)]
+
+# Subsets the data to just these columns 
+Indexmult_lsoa=Indexmult_lsoa[cols]
+
+# Subsets the data so that it is Liverpool only
+Liverpool_data=Indexmult_lsoa[Indexmult_lsoa["Local Authority District name (2019)"].str.contains("Liverpool")]
+
+# Delete multiple deprivation to clear the memory
+del Indexmult_lsoa
+
+
+# -
+
+list(Liverpool_data)
+
+# +
+Liverpool_lsoa_features_list = []
+import time
+
+
+for lsoa_code in Liverpool_data['LSOA code (2011)']:
+       time.sleep(0.2) # Add some delay as there are a lot of lsoa files to get through
+       boundary=get_shape(lsoa_code)
+       # Extract the polygon coordinates from geojson
+       polygon_boundary=boundary[0]["http://www.opengis.net/ont/geosparql#asWKT"][0]['@value']
+       # Use shapely to load into the geometry
+       Liverpool_lsoa_features_list.append(Feature(geometry=shapely.wkt.loads(polygon_boundary),properties={'LSOA code (2011)': lsoa_code }))
+      
+        
+Liverpool_lsoa_features=FeatureCollection(Liverpool_lsoa_features_list)
+
+# Converts to a geopandas data frame
+Liverpool_lsoa = gpd.GeoDataFrame(Liverpool_lsoa_features)
+
+# Write it out as a geojson
+with open('Data/Liverpool_lsoa.geojson', 'w') as f:
+   dump(Liverpool_lsoa_features, f)
+
+# Read in the geojson
 filename = "Data/Liverpool_lsoa.geojson"
-file = open(filename)
-Liverpool_lsoa = gpd.read_file(file)
+Liverpool_lsoa = open(filename, encoding='latin1')
 
-list(Liverpool_lsoa)
+# and then read in (Writing out and reading in is wasteful, must be a better way)
+Liverpool_lsoa = gpd.read_file(Liverpool_lsoa)
 
-metrics=['Total population: mid 2015 (excluding prisoners)',
- 'Dependent Children aged 0-15: mid 2015 (excluding prisoners)',
- 'Population aged 16-59: mid 2015 (excluding prisoners)',
- 'Older population aged 60 and over: mid 2015 (excluding prisoners)',
- 'Working age population 18-59/64: for use with Employment Deprivation Domain (excluding prisoners)',
+# Set the projection
+Liverpool_lsoa = gpd.GeoDataFrame(Liverpool_lsoa, geometry=Liverpool_lsoa["geometry"], crs = 'WGS84' )
+# -
+
+# Plot to check it looks like Liverpool
+Liverpool_lsoa.plot()
+
+# Merge the geojson with the multiple deprivation lsoa data [Perhaps a simpler way to do this]
+Liverpool_lsoa=Liverpool_lsoa.merge(Liverpool_data, how='inner', on='LSOA code (2011)')
+
+metrics=[
     'Income Domain numerator',
  'Income Deprivation Affecting Children Index (IDACI) numerator',
  'Income Deprivation Affecting Older People Index (IDAOPI) numerator',
@@ -91,11 +190,15 @@ metrics=['Total population: mid 2015 (excluding prisoners)',
  'Benzene (component of air quality indicator)',
  'Sulphur dioxide (component of air quality indicator)',
  'Particulates (component of air quality indicator)',
- 'Air quality indicator',
+ 'Air quality indicator', 'Total population: mid 2015 (excluding prisoners)',
+ 'Dependent Children aged 0-15: mid 2015 (excluding prisoners)',
+ 'Population aged 16-59: mid 2015 (excluding prisoners)',
+ 'Older population aged 60 and over: mid 2015 (excluding prisoners)',
+ 'Working age population 18-59/64: for use with Employment Deprivation Domain (excluding prisoners)'
         ]
 
 # +
-# Reads in the etl data 
+# Reads in the e-food deserts index data 
 
 efdi_engwales=pd.read_csv("Data/efdi_england.csv")
 # -
@@ -105,14 +208,7 @@ efdi_engwales.head(n=5)
 #Merge with the lsoa data
 Liverpool_lsoa=Liverpool_lsoa.merge(efdi_engwales, how='inner', left_on='LSOA code (2011)', right_on='LSOA or DZ')
 
-Liverpool_lsoa.head()
-
-Liverpool_lsoa = gpd.GeoDataFrame(Liverpool_lsoa, geometry=Liverpool_lsoa["geometry"], crs = 'WGS84' )
-
-# +
-# Adds data to the Kepler map
-#map.add_data("Liverpool_lsoa", name="Liverpool_lsoa")
-# -
+Liverpool_lsoa['Acute morbidity indicator'].hist()
 
 metrics=metrics+['Score']
 
@@ -124,29 +220,137 @@ for measure in metrics:
    new_col=pd.DataFrame(np.ceil(Liverpool_lsoa[measure].rank(pct=True).mul(5)).astype('Int64')).rename(columns={measure: measure+"_rank"})
    data_ranked=pd.concat([data_ranked, new_col], axis=1)
 
+# Ranking is in the order i.e. the lowest scores will be in 1 and highest scores will be in 5
 
-
-#Liverpool_lsoa=gç(lsoa)
-#Merge with the lsoa data
-
-
+# Merges with the ranking data
 Liverpool_lsoa=Liverpool_lsoa.merge(data_ranked, how='inner', left_on='LSOA code (2011)', right_on='LSOA code (2011)')
-#Liverpool_lsoa=Liverpool_lsoa.merge(data_ranked,how='inner', on='LSOA code (2011)')
+# -
 
-#Liverpool_lsoa = gpd.GeoDataFrame(Liverpool_lsoa, geometry=Liverpool_lsoa["geometry"], crs ='4326')
+Liverpool_lsoa[['Population aged 16-59: mid 2015 (excluding prisoners)','Population aged 16-59: mid 2015 (excluding prisoners)_rank','Income Domain numerator','Income Domain numerator_rank','Acute morbidity indicator', 'Acute morbidity indicator_rank']]
+
+# Write out the food outlets location as a geojson for use in the mapbox map
+Liverpool_lsoa.to_file("Data/Out/Liverpool_lsoa.geojson", driver='GeoJSON')
+
+
+# # Area data: Reads in the ward level data, adds in the geographies and write out as a geojson
+
+# Import the ward level data 
+food_poverty_stats=pd.read_csv("Data/Food_Poverty_Health_stats.csv")
+food_poverty_stats.tail(n=5)
+
+# Subsets so we look just at 2020 data and drop the general all Liverpool data
+food_poverty_stats2020=food_poverty_stats[(food_poverty_stats['Year']==2020) & (food_poverty_stats['WardName']!="Liverpool")]
+food_poverty_stats2020.head(n=5)
+
+# +
+#Create a list of features to stick the different wards together into a single geojson
+features = []
+
+
+for ward in food_poverty_stats2020['WardCode']:
+       boundary=get_shape(ward)
+       # Extract the polygon coordinates from geojson
+       polygon_boundary=boundary[0]["http://www.opengis.net/ont/geosparql#asWKT"][0]['@value']
+       # Use shapely to load into the geometry
+       features.append(Feature(geometry=shapely.wkt.loads(polygon_boundary),properties={"WardCode": ward }))
+        
+        
+Liverpool_wards = FeatureCollection(features)
+
+
+# Write it out as a geojson
+with open('Data/Liverpool_wards.geojson', 'w') as f:
+   dump(Liverpool_wards, f)
+
+# write out as a geojson
+filename = "Data/Liverpool_wards.geojson"
+file = open(filename, encoding='latin1')
+
+#and read back in
+Liverpool_wards = gpd.read_file(file)
 
 
 
 # -
 
-data_ranked
+# Merge with the other ward data, seems simpler to do it this way, but maybe not
+Liverpool_wards=Liverpool_wards.merge(food_poverty_stats2020, how='inner', on='WardCode')
 
-# Write out the food outlets location as a geojson for use in the mapbox map
-Liverpool_lsoa.to_file("Data/Out/Liverpool_lsoa.geojson", driver='GeoJSON')
+list(Liverpool_wards)
 
-list(Liverpool_lsoa)
+measures=["Ward_DASR_Cancers_Under75","Ward_DASR_cvd_Under754" ,
+          "Ward_Reception_Overweight_Obese", 
+         "Ward_Year6_Overweight_obese" , 
+          "Ward_alcohol_specific_admissions"]
 
-# # The geocoding function (to code the food outlets data and the food banks data)
+
+# +
+wards_ranked=pd.DataFrame(food_poverty_stats2020["WardCode"])
+
+
+# converts the variables into quintiles and then adds to the original Geodataframe (adding as a straight dataframe causes problems)
+for measure in measures: 
+    new_col=pd.DataFrame(np.ceil(food_poverty_stats2020[measure].rank(pct=True).mul(5)).astype('Int64')).rename(columns={measure: measure+"_rank"})
+    wards_ranked=pd.concat([wards_ranked, new_col], axis=1)
+
+
+# -
+
+# Merge with the other ward data, seems simpler to do it this way, but maybe not
+Liverpool_wards=Liverpool_wards.merge(wards_ranked, on='WardCode')
+
+Liverpool_wards.to_file("Data/Out/Liverpool_wards.geojson", driver='GeoJSON')
+
+# # Extracting the Liverpool border area file
+
+# +
+features=[]
+
+Liv=food_poverty_stats[(food_poverty_stats['WardName']=="Liverpool") & (food_poverty_stats['Year']==2020) ]
+# Get the shape file for the Liverpool city code
+boundary=get_shape("E08000012")
+# -
+
+polygon_boundary=boundary[0]["http://www.opengis.net/ont/geosparql#asWKT"][0]['@value']
+# Use shapely to load into the geometry
+features.append(Feature(geometry=shapely.wkt.loads(polygon_boundary),properties={"WardCode": "E08000012" }))
+
+Liverpool_boundary = FeatureCollection(features)
+
+# +
+# Write it out as a geojson, note this may require reformatting to reload into mapbox
+with open('Data/Out/Liverpool_boundary.geojson', 'w') as f:
+    dump( Liverpool_boundary, f)
+    
+    
+# Read in the geojson
+filename = "Data/Out/Liverpool_boundary.geojson"
+Liverpool_boundary = open(filename, encoding='latin1')
+
+# and then read in (Writing out and reading in is wasteful, must be a better way)
+Liverpool_boundary = gpd.read_file(Liverpool_boundary)
+# -
+
+Liverpool_boundary.plot()
+
+# # Get a bounding box
+
+# This expands the bounding box around Liverpool so that the map border is wider than the area of the Liverpool shape file
+
+Liverpool_boundary_expand=Liverpool_boundary
+
+Liverpool_boundary.total_bounds
+
+# +
+Liverpool_boundary_expand.geometry.iloc[0] = shapely.affinity.scale(Liverpool_boundary_expand.geometry.iloc[0], xfact=1.6, yfact=1.6, origin='center')
+
+
+
+# -
+
+Liverpool_boundary_expand.total_bounds
+
+# # Points data: The geocoding function (to code the food outlets data and the food banks data)
 
 # Initialises the geocoding
 geolocator = Nominatim(user_agent="Liverpool_analysis")
@@ -189,7 +393,7 @@ pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 addresses = ['58 Victoria Embankment, London', 'Ferry Road, Edinburgh'] l
 ocations = pool.map(worker, addresses) '''
 
-# # Adding in food outlet locations
+# # Points data: Geocoding the food outlets data 
 
 # Example of the xml that is being parsed
 '''
@@ -234,7 +438,7 @@ rows = []
 
 food_outlets_df  = pd.DataFrame(rows, columns = df_cols)
 
-# Some of this parsing could be tidied up
+# Tidy up the parsing if time to much hacked together from Stackoverflow
 for neighbor in root.iter('EstablishmentCollection'):
    for node in neighbor:
        bus_laid=node.find("LocalAuthorityBusinessID").text  if node is not None else None
@@ -326,7 +530,7 @@ food_outlets_geo = gpd.GeoDataFrame(food_outlets_df_clean, crs = 'epsg:4326' , g
 
 
 # Select the food outlets that fall within Liverpool lsoas
-food_outlets_geo = gpd.overlay(food_outlets_geo , Liverpool_lsoa, how='intersection')
+food_outlets_geo = gpd.overlay(food_outlets_geo , Liverpool_boundary, how='intersection')
 
 # Split out supermarkets as it makes it easier to handle them
 
@@ -354,13 +558,13 @@ food_outlets_geo.to_file("Data/Out/Food_outlets_geo.geojson", driver='GeoJSON')
 supermarkets.to_file("Data/Out/Supermarkets_geo.geojson", driver='GeoJSON')
 # -
 
-# # Adding in food initatives
+# # Points data: Geocoding the affordable food initatives 
 
 # ls Data/
 
 # !pip3 install openpyxl
 
-Affordable_food_sheet = pd.ExcelFile('Data/Affordable_food_inititives_Liverpool.xlsx')
+Affordable_food_sheet = pd.ExcelFile('Data/Affordable_food_initatives_Liverpool.xlsx')
 
 Affordable_food_sheet.sheet_names
 
@@ -424,12 +628,14 @@ geometry = [Point(xy) for xy in zip(Affordable_food_outlets_df_clean['lon'], Aff
 Affordable_food_outlets = gpd.GeoDataFrame(Affordable_food_outlets_df_clean, crs = 'epsg:4326' , geometry = geometry)
 # -
 
+Affordable_food_outlets["Time"]=str(Affordable_food_outlets["Time"])
+
 Affordable_food_outlets.plot()
 
 # Write out the food initatives location as a geojson for use in the mapbox map
 Affordable_food_outlets.to_file("Data/Out/Affordable_food_iniatives.geojson", driver='GeoJSON')
 
-# # Emergency food initatives
+# # Points data: Geocoding the Emergency food initatives
 
 Emergency_food_sheet = pd.ExcelFile('Data/emergency_food_providers.xlsx')
 
@@ -490,121 +696,7 @@ Emergency_food_suppliers.plot()
 
 Emergency_food_suppliers.to_file("Data/Out/Emergency_food_suppliers.geojson", driver='GeoJSON')
 
-conda install seaborn
-
-# ! pip install geoplot
-
 Emergency_food_suppliers["categ"]
-
-# # Extract the ward area boundaries from the API
-
-# +
-URL = "http://statistics.data.gov.uk/resource.json?uri=http%3A%2F%2Fstatistics.data.gov.uk%2Fid%2Fstatistical-geography%2F{code}%2Fgeometry"
-
-# Function to call the API with the geography codes and return the shape files using the API
-def get_shape(gss_code):
-    return requests.get(URL.format(code=gss_code)).json()
-
-
-# +
-# Import the ward codes
-# -
-
-food_poverty_stats=pd.read_csv("Data/Food_Poverty_Health_stats.csv")
-food_poverty_stats.tail(n=5)
-
-# Subsets so we look just at 2020 data and drop the general all Liverpool data
-food_poverty_stats2020=food_poverty_stats[(food_poverty_stats['Year']==2020) & (food_poverty_stats['WardName']!="Liverpool")]
-food_poverty_stats2020.head(n=5)
-
-# +
-#Create a list of features to stick the different wards together into a single geojson
-features = []
-
-
-for ward in food_poverty_stats2020['WardCode']:
-       boundary=get_shape(ward)
-       # Extract the polygon coordinates from geojson
-       polygon_boundary=boundary[0]["http://www.opengis.net/ont/geosparql#asWKT"][0]['@value']
-       # Use shapely to load into the geometry
-       features.append(Feature(geometry=shapely.wkt.loads(polygon_boundary),properties={"WardCode": ward }))
-        
-        
-Liverpool_wards = FeatureCollection(features)
-
-
-# Write it out as a geojson
-with open('Data/Liverpool_wards.geojson', 'w') as f:
-   dump(Liverpool_wards, f)
-
-# Read in the geojson
-filename = "Data/Liverpool_wards.geojson"
-file = open(filename, encoding='latin1')
-Liverpool_wards = gpd.read_file(file)
-
-
-
-# -
-
-# Merge with the other ward data, seems simpler to do it this way, but maybe not
-Liverpool_wards=Liverpool_wards.merge(food_poverty_stats2020, how='inner', on='WardCode')
-
-list(Liverpool_wards)
-
-measures=["Ward_DASR_Cancers_Under75","Ward_DASR_cvd_Under754" ,
-          "Ward_Reception_Overweight_Obese", 
-         "Ward_Year6_Overweight_obese" , 
-          "Ward_alcohol_specific_admissions"]
-
-
-# +
-wards_ranked=pd.DataFrame(food_poverty_stats2020["WardCode"])
-
-
-# converts the variables into quintiles and then adds to the original Geodataframe (adding as a straight dataframe causes problems)
-for measure in measures: 
-    new_col=pd.DataFrame(np.ceil(food_poverty_stats2020[measure].rank(pct=True).mul(5)).astype('Int64')).rename(columns={measure: measure+"_rank"})
-    wards_ranked=pd.concat([wards_ranked, new_col], axis=1)
-
-
-# -
-
-# Merge with the other ward data, seems simpler to do it this way, but maybe not
-Liverpool_wards=Liverpool_wards.merge(wards_ranked, on='WardCode')
-
-Liverpool_wards.to_file("Data/Out/Liverpool_wards.geojson", driver='GeoJSON')
-
-# # Extracting the Liverpool border area file
-
-# +
-features=[]
-
-Liv=food_poverty_stats[(food_poverty_stats['WardName']=="Liverpool") & (food_poverty_stats['Year']==2020) ]
-# Get the shape file for the Liverpool city code
-boundary=get_shape("E08000012")
-# -
-
-polygon_boundary=boundary[0]["http://www.opengis.net/ont/geosparql#asWKT"][0]['@value']
-# Use shapely to load into the geometry
-features.append(Feature(geometry=shapely.wkt.loads(polygon_boundary),properties={"WardCode": "E08000012" }))
-
-Liverpool_boundary = FeatureCollection(features)
-
-# Write it out as a geojson, note this may require reformatting to reload into mapbox
-with open('Data/Out/Liverpool_boundary.geojson', 'w') as f:
-    dump( Liverpool_boundary, f)
-
-# # Get a bounding box
-
-# This expands the bounding box around Liverpool so that the map border is wider than the area of the Liverpool shape file
-
-Liverpool_wards_expand=Liverpool_wards
-
-Liverpool_wards_expand.total_bounds
-
-Liverpool_wards_expand.geometry.iloc[0] = shapely.affinity.scale(Liverpool_wards_expand.geometry.iloc[0], xfact=1.05, yfact=1.05, origin='center')
-
-Liverpool_wards_expand.total_bounds
 
 # # Generate a whole set of density plots
 
