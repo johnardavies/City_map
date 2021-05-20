@@ -52,10 +52,11 @@
                             href="https://ratings.food.gov.uk/default/en-GB">Food Standards Agency website</a></p>
                     <h5>The affordable food initatives (Food pantries, Free food initatives, Community cafes)
                         information</h5>
-                    <p>This has been obtained from the <a href="http://www.feedingliverpool.org/resources">Feeding
+                    <p>This has been obtained from the Liverpool good food plan. A map of these sites may be seen at <a
+                            href="http://www.feedingliverpool.org/resources">Feeding
                             Liverpool map</a></p>
-                    <h5>The information on Foodbanks</h5>
-                    <p>This has been obtained from Google searches and will be updated</p>
+                    <h5>The information on Emergency food initatives (Food parcel and meal providers</h5>
+                    <p>This has been obtained from the Liverpool good food plan </p>
                     <h5>The walking distance layer</h5>
                     <p>This is created by calling the <a
                             href="https://docs.mapbox.com/help/tutorials/get-started-isochrone-api/">MapboxGL isochrone
@@ -69,7 +70,7 @@
                         CDRC and was obtained from their <a
                             href="https://data.cdrc.ac.uk/dataset/e-food-desert-index#:~:text=The%20e%2Dfood%20deserts%20index,density%20of%20grocery%20retail%20facilities">website</a>
                     </p>
-                    <h5>The areas that are more than 10 minutes away and in lowest quintiles</h5>
+                    <h5>The areas that are more than 10 minutes away and in highest quintiles</h5>
                     <p>This data is derived from the layers, food bank and accessible food outlet data. It is
                         produced by the Further_analysis notebook</p>
                     <h5>All other layer data</h5>
@@ -80,7 +81,7 @@
                     <p>The map's code is available on GitHub <a href="https://github.com/johnardavies/City_map">here</a>
                     </p>
                     <h4><u>Feedbank</u></h4>
-                    Please send any queries to John using the following email format: NAME.SURNAME@nesta.org.uk.
+                    Please send any queries to John using the following email format: johnardavies at gmail.com
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -100,7 +101,8 @@
                 <h5> Area information</h5>
             </div>
             <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
-                title="Population score from index of multiple deprivation" id="toggle-0">Population
+                title="Population score from index of multiple deprivation, this being the 2015 Lower super output area population estimates. A higher score represents a larger population"
+                id="toggle-0">Population
                 levels</a>
             <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
                 title="Income score from index of multiple deprivation. This is a measure of the number of people in the area in reciept of different benefits. A higher score represents a higher proportion recieving benefits"
@@ -114,7 +116,9 @@
             <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
                 title="This indicator measures the proportion of young people not staying on at school or non-advanced education post 16. A higher score respresnts a higher proportion of young people not staying on"
                 id="toggle-4">Education post 16</a>
-            <a href="#" class="btn-nesta" id="toggle-5">E-food deserts index</a>
+            <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom" title="This is a composite index which measures the extent to which areas have characteristics associated with food deserts. A higher value indicates that the area 
+            has more characteristics associated with food deserts id=" toggle-5">E-food deserts index</a>
+
             <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
                 title="Reception class obesity score from Liverpool local authority data. A higher score represents higher levels of obesity. This is at ward level"
                 id="toggle-6">Reception class
@@ -127,8 +131,8 @@
             <form>
                 <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
                 <label class="checkbox-inline"><input type="checkbox" id='normalisation' , value='normalise'> Areas
-                    having the highest scores on these measures and are more than 10 minutes away from food support
-                    initative </label>
+                    having the highest 20% scores on these measures that are more than 10 minutes away from food support
+                    initatives </label>
             </form>
             <a href="#" class="btn-nesta" id="toggle-8">10 mins walk from supermarket</a>
             <!--   </div> -->
