@@ -180,6 +180,8 @@ div#blur {
 #menu div.menu_header {  /* The dot selects on class attribute menu_header */
  text-align: center; /* Sets the text to be centred in the menu_header class */
  background-color: #f7e9e9;
+ border-bottom: 1px solid rgba(0,0,0,0.25);
+ border-top: 1px solid rgba(0,0,0,0.25);
  }
 
 /*
