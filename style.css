@@ -79,7 +79,7 @@ div#blur {
 
 
 .legend {
-  background-color: rgb(252, 252, 252);
+  background-color: rgb(252, 252, 252); 
   border-radius: 3px; /* round corners of the border which comes after padding */
   box-shadow: 0 1px 2px rgba(0,0,0,0.10);
   font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -109,7 +109,7 @@ div#blur {
 .bottom { bottom: 10px; }
 
 .scale-legend{
-  background-color: #fff;
+  background-color:#fff; 
   border-radius: 3px;
   width: 200px ;
   box-shadow: 0 1px 2px rgba(0,0,0,0.10);
@@ -139,7 +139,7 @@ div#blur {
 
 
 #menu {
-  background: rgb(255, 254, 254);  /* The colour of the menu background which is white */
+  background: #f7e9e9; /* rgb(255, 254, 254);  /* The colour of the menu background which is white */
   position: absolute;
   z-index: 1;
   top: 13px;  /* Height of button */
@@ -148,12 +148,13 @@ div#blur {
   width: 270px;  /* The width of the menu */
   border: 1px solid rgba(0,0,0,0.4);
   font-family: 'Open Sans', sans-serif;
+  text-align: center;
 }
 
 
 
 
-#menu a {  /* covers the individual a elements of the menu */
+#menu a {  /* covers the individual a elements of the menu. The hash selects the id=menu elements */
   font-size: 13px;
   background-color: #93c3eb; /* The colouring of the buttons */
   color: #070707; /* The colouring of the lettering */
@@ -176,9 +177,10 @@ div#blur {
   color: #404040; /* The colour of the text when there is a mouse over */
 }
 
-.menu h3 {
-  text-align: center;
-}
+#menu div.menu_header {  /* The dot selects on class attribute menu_header */
+ text-align: center; /* Sets the text to be centred in the menu_header class */
+ background-color: #f7e9e9;
+ }
 
 /*
 #menu a:focus {  
@@ -211,6 +213,9 @@ div#blur {
           right: 10px;
           border-radius: 3px;
         }
+
+
+
 
 
        
