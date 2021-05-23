@@ -197,19 +197,21 @@
             <div>
                 <h5>Area information scale</h5>
             </div>
-            <div><span style="background-color:#fddbc7"></span>Lowest 20%</div>
-            <div><span style="background-color: #f7f7f7"></span>20%-40%</div>
-            <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
-            <div><span style="background-color: #67a9cf"></span>60%-80%</div>
             <div><span style="background-color: #2166ac"></span>Highest 20%</div>
+            <div><span style="background-color: #67a9cf"></span>60%-80%</div>
+            <div><span style="background-color:#d1e5f0"></span>Middle 20%</div>
+            <div><span style="background-color: #f7f7f7"></span>20%-40%</div>
+            <div><span style="background-color:#fddbc7"></span>Lowest 20%</div>
+
+
         </div>
         <div id="scale-legend2" class="scale-legend" style="display: block">
             <h5>Food bank/pantry use scale </h5>
-            <div><span style="background-color :#edf8e9"></span>Lowest 20%</div>
-            <div><span style="background-color: #bae4b3"></span>20%-40%</div>
-            <div><span style="background-color: #74c476"></span>Middle 20% </div>
-            <div><span style="background-color: #31a354"></span>60%-80%</div>
             <div><span style="background-color: #006d2c"></span>Highest 20%</div>
+            <div><span style="background-color: #31a354"></span>60%-80%</div>
+            <div><span style="background-color: #74c476"></span>Middle 20% </div>
+            <div><span style="background-color: #bae4b3"></span>20%-40%</div>
+            <div><span style="background-color: #edf8e9"></span>Lowest 20%</div>
         </div>
 
         <script>
@@ -284,11 +286,11 @@
             // The bounding box for the map
             var bounds = [
 
-                [-3.24471632, 53.2401742],  // Was [-3.0542, 53.295875], Southwest coordinates
-                [-2.707879, 53.559962]   // Was [-2.7812, 53.510825]   Northeast coordinates
+                [-3.14471632, 53.3031742],  // Was [-3.0542, 53.295875], Southwest coordinates
+                [-2.66579, 53.50000]   // Was [-2.7812, 53.510825]   Northeast coordinates
             ];
 
-            var zoomThreshold = 4;
+            var zoomThreshold = 2;
 
             var normalised = false;
 
@@ -301,7 +303,7 @@
                 container: 'map',
                 style: 'mapbox://styles/mapbox/basic-v9',
 
-                center: [53.900000, -2.963450], // The coordinate that the map is centred on
+                center: [53.900000, -2.993450], // The coordinate that the map is centred on
                 minZoom: 1,  // The minimum zoom level that the map allows
                 zoom: 8,  // The bigger the zoom number the closer in you 
                 pitch: 0, // the angle of the view
