@@ -47,8 +47,8 @@ The layers are ```income.geojson, population.geojson, education.geojson, morbidi
 ***8. The layers showing the levels of Food bank and pantry usage*** \
 These are produced in a separate analysis which is private owing to the data that it includes. The geojson that produces these at 3-4 digit postcode level is ***Foodbank_pantry_use.geojson***
 
-***9. The layer showing the connection between foodbank users and the postcodes that make use of them (This is shown by clicking the bottom checkbox)*** \
-This is created using a separate notebook as the data used to produce it is not public. This is the **Foodbank_network.geojson**.
+***9. The layers showing the connection between foodbank and pantry users and the centroids of the postcodes that make use of them (This is shown by clicking the bottom checkbox)*** \
+These are created using a separate notebook as the data used to produce them is not public. The files that the map is reading are the **Foodbank_network.geojson** and the **Pantry_network.geojson**. The Food bank network has been filtered so that postcodes and foodbanks needed to be connected by at least 10 voucher uses to be included.
 
 
 ***10. All other layer data*** \
