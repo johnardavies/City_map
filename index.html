@@ -73,6 +73,8 @@
                     <h5>The areas that are more than 10 minutes away and in highest quintiles</h5>
                     <p>This data is derived from the layers, food bank and accessible food outlet data. It is
                         produced by the Further_analysis notebook</p>
+                    <h5>The data on food bank and pantry usage </h5>
+                    <p>This had been obtained from the Liverpool good food plan</p>
                     <h5>All other layer data</h5>
                     <p>This is taken from the <a
                             href="https://data-communities.opendata.arcgis.com/datasets/d4b79be994ac4820ad44e10ded313df3_0">
@@ -107,16 +109,16 @@
             levels</a>
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="Income score from index of multiple deprivation. This is a measure of the number of people in the area in reciept of different benefits. A higher score represents a higher proportion recieving benefits"
-            id="toggle-1">Income levels</a>
+            id="toggle-1">Levels of benefits receipt</a>
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="Morbidity score from index of multiple deprivation. The indicator measures levels of emergency admissions to hospital, based on administrative records of inpatient admissions. A higher score represents a higher level of deprivation"
-            id="toggle-2">Morbidity levels</a>
+            id="toggle-2">Emergency hospital admissions levels</a>
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="The indicator from the index of multiple deprivation is the proportion of households in a Lower-layer Super Output Area that are classed as overcrowded. A higher score represents higher levels of overcrowding"
-            id="toggle-3">Household overcrowding</a>
+            id="toggle-3">Household overcrowding levels</a>
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="This indicator measures the proportion of young people not staying on at school or non-advanced education post 16. A higher score respresnts a higher proportion of young people not staying on"
-            id="toggle-4">Education post 16</a>
+            id="toggle-4">Proportion of young people not in post 16 education</a>
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom" title="This is a composite index which measures the extent to which areas have characteristics associated with food deserts. A higher value indicates that the area 
             has more characteristics associated with food deserts" id="toggle-5">E-food deserts index</a>
 
@@ -150,7 +152,10 @@
         <form>
             <!--The check box to select layers corresponding to the layers above but which are in the lowest quintile and more than 10 minutes away-->
 
-            <label class="checkbox-inline"><input type="checkbox" id='network_add' , value='normalise'>Show travel
+            <label class="checkbox-inline"><input type="checkbox" id='network_add' data-toggle="tooltip"
+                    data-placement="right"
+                    title="This shows distance between the food bank/pantry users (as proxied by centroid of truncated postcode) and the food bank/pantry they used. With food banks a threshold of at least 10 voucher uses between a postcode and food bank has been used to filter the data. With food pantries the user data has less complete coverage of the food pantries shown in the south"
+                    value='normalise'>Show travel
                 distance to Food banks or pantries from approximate location of their users postcodes </label>
 
         </form>
