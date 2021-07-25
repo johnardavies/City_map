@@ -660,7 +660,7 @@
                     'type': 'line',
                     'filter': ["any",
                         // 
-                        ['>', 'count', 10]
+                        ['>', 'count', 15]
                     ],
                     'layout': {
                         'visibility': 'none',
@@ -668,16 +668,18 @@
                         'line-cap': 'round'
                     },
                     'paint': {
-                        //   'line-color': "#2166ac"
-                        //} // "#331800",
+
                         'line-color': ['case',
                             ['boolean', ['feature-state', 'hover'], false],
-                            "#2166ac", "#331800"]
-                    }
-                    //      'line-width': 1,
-                    //      'line-opacity': 0.1
-                    //  }
+                            "#ffffff", "#331800"],  // "#2166ac", "#FF0000"
 
+                        'line-width': ['case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            3, 1]
+
+                        //      'line-opacity': 0.1
+
+                    }
                 }, 'Food_banks');
 
 
@@ -694,7 +696,7 @@
                     'type': 'line',
                     'filter': ["any",
                         // 
-                        ['>', 'count', 10]
+                        ['>', 'count', 15]
                     ],
                     'layout': {
                         'visibility': 'none',
@@ -705,7 +707,11 @@
 
                         'line-color': ['case',
                             ['boolean', ['feature-state', 'hover'], false],
-                            "#2166ac", "#331800"]
+                            "#ffffff", "#331800"],
+
+                        'line-width': ['case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            3, 1]
                     }
 
                 }, 'Food_banks');
