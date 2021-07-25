@@ -103,7 +103,7 @@
                 <h5><strong> Area information</strong></h5>
             </div>
         </div>
-     <!--   <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+        <!--   <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="Population score from index of multiple deprivation, this being the 2015 Lower super output area population estimates. A higher score represents a larger population"
             id="toggle-0">Population
             levels</a> -->
@@ -113,16 +113,16 @@
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="Morbidity score from index of multiple deprivation. The indicator measures levels of emergency admissions to hospital, based on administrative records of inpatient admissions. A higher score represents a higher level of deprivation"
             id="toggle-2">Emergency hospital admissions levels</a>
-  <!--  <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+        <!--  <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="The indicator from the index of multiple deprivation is the proportion of households in a Lower-layer Super Output Area that are classed as overcrowded. A higher score represents higher levels of overcrowding"
             id="toggle-3">Household overcrowding levels</a> -->
-  <!--  <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+        <!--  <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="This indicator measures the proportion of young people not staying on at school or non-advanced education post 16. A higher score respresnts a higher proportion of young people not staying on"
             id="toggle-4">Proportion of young people not in post 16 education</a> -->
         <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom" title="This is a composite index which measures the extent to which areas have characteristics associated with food deserts. A higher value indicates that the area 
             has more characteristics associated with food deserts" id="toggle-5">E-food deserts index</a>
 
-     <!--   <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
+        <!--   <a href="#" class="btn-nesta" data-toggle="tooltip" data-placement="bottom"
             title="Reception class obesity score from Liverpool local authority data. A higher score represents higher levels of obesity. This is at ward level"
             id="toggle-6">Reception class
             obesity
@@ -352,7 +352,7 @@
             function toggleLayer(layerName) {
                 var currentState = map.getLayoutProperty(layerName, 'visibility');
 
-                var layer_list = [ 'Income_layer', 'Morbidity_layer', 'Foodaccess_layer','Iso_layer', 'Iso_layer_super', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users', 'Foodbank_network', 'Pantry_network']
+                var layer_list = ['Income_layer', 'Morbidity_layer', 'Foodaccess_layer', 'Iso_layer', 'Iso_layer_super', 'income_dist', 'score_dist', 'crowding_dist', 'morbidity_dist', 'education_dist', 'population_dist', 'obesity_dist', 'Foodpantry_users', 'Foodbank_users', 'Foodbank_network', 'Pantry_network']
                 // 'Population_layer', 'Income_layer', 'Education_layer', 'Overcrowding_layer''Obesity_layer'
                 /* unchecks the two tick boxes*/
                 $('#normalisation').prop('checked', false);
@@ -668,10 +668,15 @@
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': "#331800",
-                        'line-width': 1,
-                        'line-opacity': 0.1
+                        //   'line-color': "#2166ac"
+                        //} // "#331800",
+                        'line-color': ['case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            "#2166ac", "#331800"]
                     }
+                    //      'line-width': 1,
+                    //      'line-opacity': 0.1
+                    //  }
 
                 }, 'Food_banks');
 
@@ -682,24 +687,42 @@
                     data: 'Pantry_network.geojson'
                 });
 
+                // Adds in the food pantry network with mouseover         
                 map.addLayer({
                     'id': 'Pantry_network',
                     'source': 'Pantry_network',
                     'type': 'line',
+                    'filter': ["any",
+                        // 
+                        ['>', 'count', 10]
+                    ],
                     'layout': {
                         'visibility': 'none',
                         'line-join': 'round',
                         'line-cap': 'round'
                     },
                     'paint': {
-                        'line-color': "#331800",
-                        'line-width': 1,
-                        'line-opacity': 0.1
+
+                        'line-color': ['case',
+                            ['boolean', ['feature-state', 'hover'], false],
+                            "#2166ac", "#331800"]
                     }
 
                 }, 'Food_banks');
 
 
+
+
+
+
+
+
+
+
+                // Sets up the hoveredStateIds for foodbanks and pantries
+                var hoveredStateId = null;
+                // Sets up the hoveredStateId
+                var hoveredStateId_pantry = null;
 
 
                 // Add the data for the different layers to the map
@@ -1052,13 +1075,13 @@
                 // json mapping layers to buttons
 
                 var buttons_to_layers = [
-               //     { 'button_id': 'toggle-0', 'layer_to_link': 'Population_layer' }
-                      { 'button_id': 'toggle-1', 'layer_to_link': 'Income_layer' }
+                    //     { 'button_id': 'toggle-0', 'layer_to_link': 'Population_layer' }
+                    { 'button_id': 'toggle-1', 'layer_to_link': 'Income_layer' }
                     , { 'button_id': 'toggle-2', 'layer_to_link': 'Morbidity_layer' }
-               //     , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding_layer' }
-               //     , { 'button_id': 'toggle-4', 'layer_to_link': 'Education_layer' }
+                    //     , { 'button_id': 'toggle-3', 'layer_to_link': 'Overcrowding_layer' }
+                    //     , { 'button_id': 'toggle-4', 'layer_to_link': 'Education_layer' }
                     , { 'button_id': 'toggle-5', 'layer_to_link': 'Foodaccess_layer' }
-               //     , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer' }
+                    //     , { 'button_id': 'toggle-6', 'layer_to_link': 'Obesity_layer' }
                     , { 'button_id': 'toggle-7', 'layer_to_link': 'Iso_layer' }
                     , { 'button_id': 'toggle-8', 'layer_to_link': 'Iso_layer_super' }
                     , { 'button_id': 'toggle-add1', 'layer_to_link': 'Foodbank_users' }
@@ -1105,6 +1128,82 @@
                         .addTo(map);
                 });
 
+
+                // Mouse over for the food  bank and pantry networks
+                ///////////////////////////////////////////////////////////////////////
+                // Mouse over for the food bank network
+                map.on('mousemove', 'Foodbank_network', function (e) {
+                    if (e.features.length > 0) {
+                        if (hoveredStateId !== null) {
+                            map.setFeatureState(
+                                { source: 'Foodbank_network', id: hoveredStateId },
+                                { hover: false }
+                            );
+                        }
+
+                        hoveredStateId = e.features[0].properties.bank_code;
+
+                        map.setFeatureState(
+                            { source: 'Foodbank_network', id: hoveredStateId },
+                            { hover: true }
+                        );
+                    }
+                });
+
+
+                // When the mouse leaves the food bank layer, update the feature state of the
+                // previously hovered feature.
+                map.on('mouseleave', 'Foodbank_network', function () {
+                    if (hoveredStateId !== null) {
+                        map.setFeatureState(
+                            { source: 'Foodbank_network', id: hoveredStateId },
+                            { hover: false }
+                        );
+                    }
+                    hoveredStateId = null;
+                });
+
+                // When the mouse leaves the state-fill layer, update the feature state of the
+                // previously hovered feature.
+                map.on('mouseleave', 'Foodbank_network', function () {
+                    if (hoveredStateId !== null) {
+                        map.setFeatureState(
+                            { source: 'Foodbank_network', id: hoveredStateId },
+                            { hover: false }
+                        );
+                    }
+                    hoveredStateId = null;
+                })
+
+                map.on('mousemove', 'Pantry_network', function (e) {
+                    if (e.features.length > 0) {
+                        if (hoveredStateId_pantry !== null) {
+                            map.setFeatureState(
+                                { source: 'Pantry_network', id: hoveredStateId_pantry },
+                                { hover: false }
+                            );
+                        }
+                        hoveredStateId_pantry = e.features[0].properties.pantry_code;
+                        console.log(hoveredStateId_pantry)
+                        map.setFeatureState(
+                            { source: 'Pantry_network', id: hoveredStateId_pantry },
+                            { hover: true }
+                        );
+                    }
+                });
+
+
+                // When the mouse leaves the state-fill layer, update the feature state of the
+                // previously hovered feature.
+                map.on('mouseleave', 'Pantry_network', function () {
+                    if (hoveredStateId_pantry !== null) {
+                        map.setFeatureState(
+                            { source: 'Pantry_network', id: hoveredStateId_pantry },
+                            { hover: false }
+                        );
+                    }
+                    hoveredStateId_pantry = null;
+                })
 
 
                 /////////////////////////////////////////////////////////////
@@ -1207,8 +1306,8 @@
                     if ($(this)[0].checked === true) {
                         //  The layers we will apply the distance subset to
                         var layer_list2 = ['Income_layer', 'Morbidity_layer', 'Foodaccess_layer', 'Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users']
-                       // Removed layers 'Population_layer', 'Education_layer'
-                       // layers not to adjust the formatting of if the checkbox is clicked
+                        // Removed layers 'Population_layer', 'Education_layer'
+                        // layers not to adjust the formatting of if the checkbox is clicked
                         var layer_skip = ['Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users']
                         // Loops through these layers 'Overcrowding_layer', 'Obesity_layer'
                         for (var j = 0; j < layer_list2.length; j++) {
@@ -1258,7 +1357,7 @@
                     // Applies if the checkbox is checked
                     if ($(this)[0].checked === true) {
                         //  The layers we apply the network too
-                        var layer_list2 = [ 'Income_layer', 'Morbidity_layer', 'Foodaccess_layer', 'Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users', 'Foodbank_network', 'Pantry_network']
+                        var layer_list2 = ['Income_layer', 'Morbidity_layer', 'Foodaccess_layer', 'Iso_layer', 'Iso_layer_super', 'Foodbank_users', 'Foodpantry_users', 'Foodbank_network', 'Pantry_network']
                         // Removed layers 'Population_layer','Education_layer','Obesity_layer', 'Overcrowding_layer'
                         // Loops through these layers
                         for (var j = 0; j < layer_list2.length; j++) {
