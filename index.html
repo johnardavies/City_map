@@ -857,27 +857,77 @@
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // The isochrone layer created by calling the mapbox API
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                function iso_add(x, id, source) {
+                    // Sets up lists that the function uses
+                    var result, results = [], deferred, deferreds = [], map_results = [], arr_super = [];
 
-                // Sets up an empty base layer
-                map.addSource('iso', {
-                    type: 'geojson',
-                    data: {
-                        'type': 'FeatureCollection',
-                        'features': []
+
+                    // Sets up an empty layer as a source
+
+                    map.addSource(source, {
+                        type: 'geojson',
+                        data: {
+                            'type': 'FeatureCollection',
+                            'features': []
+                        }
+                    });
+
+                    //Convert the coordinates into API call format
+                    var map_ar = x.map(make_api);
+
+
+                    // 1. Make multiple AJAX calls to the mapbox isochrone api
+
+                    for (i = 0; i < map_ar.length; ++i) {
+
+                        deferred = $.ajax(map_ar[i], {
+                            success: function (result) {
+                                //   2. Store the results in an array
+                                results.push(result);
+                            }
+
+                        });
+                        deferreds.push(deferred);
                     }
-                });
+
+                    // wait for the api calls to finish and then apply them to the map
+                    $.when.apply($, deferreds).then(function () {
+                        // 3. Process the result array.
+
+                        for (i = 0; i < results.length; ++i) {
+
+                            map_results.push(results[i].features[0]);
+                        }
+
+                        //apply map_results to the map
+
+                        map.getSource(source).setData({ 'type': 'FeatureCollection', 'features': map_results })
+
+                        map.addLayer(
+                            {
+                                'id': id,
+                                'type': 'fill',
+                                'source': source,
+                                'layout': { 'visibility': 'none' },
+                                'paint': {
+                                    'fill-color': '#5a3fc0',
+                                    'fill-opacity': 0.3
+                                }
+                            },
+                            'Food_outlets'
+                        );
+                    })
+
+                }
 
 
-
-                // set up arrays to hold the coordinates
-
-                var arr = [];
-                var arr_bank = [];
                 // Import the affordable food initatives data as a geojson - This is a duplicate import. See if this is needed 
                 d3.json(
                     'Affordable_food_initatives.geojson',
                     function (err, data) {
                         if (err) throw err;
+                        var arr = [];
+                        var arr_bank = [];
 
                         // parse the food affordability coordinates into an array
 
@@ -886,7 +936,6 @@
                             var coordinates = data.features[i].geometry.coordinates;
                             arr.push(coordinates)
                         }
-
 
                         // Loads the foodbanks data
 
@@ -908,58 +957,8 @@
 
                                 var coord_call = arr_bank.concat(arr);
 
-                                //Convert the coordinates into API call format
-                                var map_ar = coord_call.map(make_api);
-
-                                // sets up variables
-
-                                var result, results = [], deferred, deferreds = [], map_results = [];
-
-
-                                // 1. Make multiple AJAX calls to the mapbox isochrone api
-
-                                for (i = 0; i < map_ar.length; ++i) {
-
-                                    deferred = $.ajax(map_ar[i], {
-                                        success: function (result) {
-                                            //   2. Store the results in an array
-                                            results.push(result);
-                                        }
-
-                                    });
-                                    deferreds.push(deferred);
-                                }
-
-                                // wait for the api calls to finish and then apply them to the map
-                                $.when.apply($, deferreds).then(function () {
-                                    // 3. Process the result array.
-
-                                    for (i = 0; i < results.length; ++i) {
-
-                                        map_results.push(results[i].features[0]);
-                                    }
-
-                                    //apply map_results to the map
-
-                                    map.getSource('iso').setData({ 'type': 'FeatureCollection', 'features': map_results })
-
-                                    map.addLayer(
-                                        {
-                                            'id': 'Iso_layer',
-                                            'type': 'fill',
-                                            'source': 'iso',
-                                            'layout': { 'visibility': 'none' },
-                                            'paint': {
-                                                'fill-color': '#5a3fc0',
-                                                'fill-opacity': 0.3
-                                            }
-                                        },
-                                        'Food_outlets'
-                                    );
-
-
-
-                                })
+                                // calls the function that adds the isochrones to the map
+                                iso_add(coord_call, 'Iso_layer', 'iso')
 
 
                                 // close the load foodbank geojson
@@ -968,19 +967,6 @@
                     })
 
 
-                map.addSource('iso_super', {
-                    type: 'geojson',
-                    data: {
-                        'type': 'FeatureCollection',
-                        'features': []
-                    }
-                });
-
-
-                // Generates the travel time layer for the supermarkets
-                // set up arrays to hold the coordinates
-
-                var arr_super = [];
 
                 // Import the supermarkets data as a geojson - This is a duplicate import. See if this is needed 
                 d3.json(
@@ -989,67 +975,14 @@
                         if (err) throw err;
 
                         // parse the food affordability coordinates into an array
-
+                        var arr_super = [];
                         for (var i = 0; i < data.features.length; i++) {
 
                             var coordinates = data.features[i].geometry.coordinates;
                             arr_super.push(coordinates)
                         }
-                        // stick the coordinates of the food banks and the affordable food initatives together
-
-
-                        //Convert the coordinates into API call format
-                        var map_ar = arr_super.map(make_api);
-
-                        // sets up variables
-
-                        var result, results = [], deferred, deferreds = [], map_results = [];
-
-
-                        // 1. Make multiple AJAX calls to the mapbox isochrone api
-
-                        for (i = 0; i < map_ar.length; ++i) {
-
-                            deferred = $.ajax(map_ar[i], {
-                                success: function (result) {
-                                    //   2. Store the results in an array
-                                    results.push(result);
-                                }
-
-                            });
-                            deferreds.push(deferred);
-                        }
-
-                        // wait for the api calls to finish and then apply them to the map
-                        $.when.apply($, deferreds).then(function () {
-                            // 3. Process the result array.
-
-                            for (i = 0; i < results.length; ++i) {
-
-                                map_results.push(results[i].features[0]);
-                            }
-
-                            //apply map_results to the map
-
-                            map.getSource('iso_super').setData({ 'type': 'FeatureCollection', 'features': map_results })
-
-                            map.addLayer(
-                                {
-                                    'id': 'Iso_layer_super',
-                                    'type': 'fill',
-                                    'source': 'iso_super',
-                                    'layout': { 'visibility': 'none' },
-                                    'paint': {
-                                        'fill-color': '#5a3fc0',
-                                        'fill-opacity': 0.3
-                                    }
-                                },
-                                'Food_outlets'
-                            );
-
-
-
-                        })
+                        // Calls the function that adds the isochrones to the map
+                        iso_add(arr_super, 'Iso_layer_super', 'iso_super')
 
                         // close the supermarkets import
                     })
