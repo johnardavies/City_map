@@ -860,20 +860,20 @@
                 function iso_add(x, id, source) {
                     // Sets up lists that the function uses
                     var result, results = [], deferred, deferreds = [], map_results = [], arr_super = [];
-                    // parse the food affordability coordinates into an array
-                    /*
-                     for (var i = 0; i < x.features.length; i++) {
- 
-                         var coordinates = x.features[i].geometry.coordinates;
-                         arr_super.push(coordinates)
-                     }
-                     // stick the coordinates of the food banks and the affordable food initatives together
-                    */
+
+
+                    // Sets up an empty layer as a source
+
+                    map.addSource(source, {
+                        type: 'geojson',
+                        data: {
+                            'type': 'FeatureCollection',
+                            'features': []
+                        }
+                    });
 
                     //Convert the coordinates into API call format
                     var map_ar = x.map(make_api);
-
-                    // sets up variables
 
 
                     // 1. Make multiple AJAX calls to the mapbox isochrone api
@@ -920,19 +920,6 @@
 
                 }
 
-                // Sets up an empty base layer
-                map.addSource('iso', {
-                    type: 'geojson',
-                    data: {
-                        'type': 'FeatureCollection',
-                        'features': []
-                    }
-                });
-
-
-
-                // set up arrays to hold the coordinates
-
 
                 // Import the affordable food initatives data as a geojson - This is a duplicate import. See if this is needed 
                 d3.json(
@@ -978,20 +965,6 @@
                             });
                         // close the affordable food initatives geojson
                     })
-
-
-                map.addSource('iso_super', {
-                    type: 'geojson',
-                    data: {
-                        'type': 'FeatureCollection',
-                        'features': []
-                    }
-                });
-
-
-
-                // Generates the travel time layer for the supermarkets
-                // set up arrays to hold the coordinates
 
 
 
